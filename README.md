@@ -3,7 +3,9 @@
 "Duelo de Feiticeiros" é um jogo de estratégia e ação inspirado no universo de Harry Potter. Nele, os jogadores escolhem bruxos e bruxas lendários da saga, cada um possui habilidades especiais e feitiços únicos. O objetivo é travar duelos entre si, utilizando feitiços e inteligência para derrotar o oponente.
 
 ## Definição do Jogo Ideal
+
 Título do Jogo: Duelo de Feiticeiros
+
 Em "Duelo de Feiticeiros", os jogadores mergulham em um universo inspirado na magia
 de Harry Potter. Desafiando seus amigos em duelos épicos, onde a astúcia, a estratégia e
 um toque de sorte são essenciais para alcançar a vitória.
