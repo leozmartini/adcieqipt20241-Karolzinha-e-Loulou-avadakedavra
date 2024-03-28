@@ -7,15 +7,15 @@ export default class abertura extends Phaser.Scene {
     this.load.image('fundo', './assets/fundo.png')
   }
 
-  create () { 
+  create () {
     this.add.image(400, 225, 'fundo')
-    .setInteractive()
-    .on('pointerdown', () => {
-      this.game.scene.stop('abertura')
-      this.game.scene.start('sala')
-    })
+      .setInteractive()
+      .on('pointerdown', () => {
+        this.game.scene.stop('abertura')
+        this.game.scene.start('sala')
+      })
   }
 
-  update () { 
+  update () {
   }
 }
