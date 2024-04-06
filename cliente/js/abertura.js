@@ -7,6 +7,7 @@ export default class abertura extends Phaser.Scene {
     this.load.image('fundo12', './assets/fundo1-e-2.png')
     this.load.spritesheet('coruja', './assets/coruja.png', { frameWidth: 64, frameHeight: 64 })
     this.load.image('fundo-3', './assets/fundo3.png')
+    this.load.image('logo', './assets/logo.png')
     this.load.spritesheet('play', './assets/simbolos/botao-play.png', { frameWidth: 120, frameHeight: 65 })
   }
 
@@ -15,6 +16,7 @@ export default class abertura extends Phaser.Scene {
     this.personagem = this.physics.add.sprite(0, 225, 'coruja')
 
     this.add.image(400, 225, 'fundo-3')
+    this.add.image(400, 200, 'logo')
 
     this.play = this.add.sprite(400, 350, 'play', 0)
       .setInteractive()
