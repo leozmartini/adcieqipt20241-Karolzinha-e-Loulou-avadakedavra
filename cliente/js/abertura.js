@@ -15,17 +15,24 @@ export default class abertura extends Phaser.Scene {
     this.add.image(400, 225, 'fundo12')
     this.personagem = this.physics.add.sprite(0, 225, 'coruja')
 
-    this.add.image(400, 225, 'fundo-3')
+    //
+    this.add.image(400, 225, 'fundo-3')//.preFX.addShine()
     this.add.image(400, 200, 'logo')
 
-    this.play = this.add.sprite(400, 350, 'play', 0)
+    this.botao = this.add.sprite(400, 350, 'play', 0)
       .setInteractive()
       .on('pointerdown', () => {
-        this.play.setFrame(1)
+        this.botao.setFrame(1)
       })
       .on('pointerup', () => {
-        this.game.scene.stop('abertura')
-        this.game.scene.start('sala')
+        navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+          .then((stream) => {
+            globalThis.game.midias = stream
+          })
+          .catch((error) => console.error(error))
+
+        globalThis.game.scene.stop('abertura')
+        globalThis.game.scene.start('sala')
       })
 
     this.anims.create({
