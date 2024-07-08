@@ -15,8 +15,8 @@ export default class abertura extends Phaser.Scene {
     this.add.image(400, 225, 'fundo12')
     this.personagem = this.physics.add.sprite(0, 225, 'coruja')
 
-    //
-    this.add.image(400, 225, 'fundo-3')//.preFX.addShine()
+    // sei nao
+    this.add.image(400, 225, 'fundo-3') // .preFX.addShine()
     this.add.image(400, 200, 'logo')
 
     this.botao = this.add.sprite(400, 350, 'play', 0)
