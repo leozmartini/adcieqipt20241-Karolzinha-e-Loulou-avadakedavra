@@ -1,6 +1,7 @@
 export default class mapa extends Phaser.Scene {
   constructor () {
     super('mapa')
+    this.direcaoAtual = 'frente' // Variável para armazenar a direção atual do personagem
   }
 
   preload () {
@@ -18,7 +19,6 @@ export default class mapa extends Phaser.Scene {
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
-
   }
 
   create () {
@@ -26,7 +26,6 @@ export default class mapa extends Phaser.Scene {
     this.input.addPointer(3)
 
     // Adiciona o som de fundo e de objetos
-
 
     // Cria objeto do mapa
     this.tilemapMapa = this.make.tilemap({ key: 'mapa' })
@@ -42,7 +41,6 @@ export default class mapa extends Phaser.Scene {
     this.layerarvores = this.tilemapMapa.createLayer('arvores', [this.tilesetFloresta])
     this.layercerca = this.tilemapMapa.createLayer('cerca', [this.tilesetFloresta])
     this.layerlampada = this.tilemapMapa.createLayer('lampada', [this.tilesetFloresta])
-
 
     // Criação do personagem e suas animações
     this.personagem = this.physics.add.sprite(1000, 400, 'personagem')
@@ -104,8 +102,6 @@ export default class mapa extends Phaser.Scene {
       repeat: -1
     })
 
-
-
     this.personagem.anims.play('personagem-parado-frente')
 
     // Configuração do plugin do joystick virtual
@@ -117,21 +113,25 @@ export default class mapa extends Phaser.Scene {
       thumb: this.add.circle(120, 360, 25, 0xcccccc)
     })
 
+    // Câmera
+    this.cameras.main.startFollow(this.personagem)
 
-    // camera
-    this.cameras.main.startFollow(this.personagemLocal)
+    // Variáveis de velocidade e threshold
+    this.speed = 100 // Velocidade constante do personagem
+    this.threshold = 0.1 // Limite mínimo de força para considerar o movimento
+  }
 
-    handleJoystickMove() 
-      //const speed = 100 // Velocidade constante do personagem
-     // const threshold = 0.1 // Limite mínimo de força para considerar o movimento
-    
-    // Movimenta o personagem com base na direção do joystick
+  update () {
+    this.handleJoystickMove()
+  }
+
+  handleJoystickMove () {
     const angle = Phaser.Math.DegToRad(this.joystick.angle) // Converte o ângulo para radianos
     const force = this.joystick.force
 
-    if (force > threshold) {
-      const velocityX = Math.cos(angle) * speed
-      const velocityY = Math.sin(angle) * speed
+    if (force > this.threshold) {
+      const velocityX = Math.cos(angle) * this.speed
+      const velocityY = Math.sin(angle) * this.speed
 
       this.personagem.setVelocity(velocityX, velocityY)
 
@@ -139,25 +139,37 @@ export default class mapa extends Phaser.Scene {
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
         if (velocityX > 0) {
           this.personagem.anims.play('personagem-andando-direita', true)
+          this.direcaoAtual = 'direita'
         } else {
           this.personagem.anims.play('personagem-andando-esquerda', true)
+          this.direcaoAtual = 'esquerda'
         }
       } else {
         if (velocityY > 0) {
-          this.personagem.anims.play('personagem-andando-frente', true) // Mude isso se houver uma animação de movimento para baixo
+          this.personagem.anims.play('personagem-andando-frente', true)
+          this.direcaoAtual = 'frente'
         } else {
-          this.personagem.anims.play('personagem-andando-tras', true) // Mude isso se houver uma animação de movimento para cima
+          this.personagem.anims.play('personagem-andando-tras', true)
+          this.direcaoAtual = 'tras'
         }
       }
     } else {
-      salsicha - caramelo
       // Se a força do joystick for baixa, o personagem para
       this.personagem.setVelocity(0)
-      this.personagem.anims.play('personagem-parado-frente', true)
+      switch (this.direcaoAtual) {
+        case 'frente':
+          this.personagem.anims.play('personagem-parado-frente', true)
+          break
+        case 'direita':
+          this.personagem.anims.play('personagem-parado-direita', true)
+          break
+        case 'esquerda':
+          this.personagem.anims.play('personagem-parado-esquerda', true)
+          break
+        case 'tras':
+          this.personagem.anims.play('personagem-parado-tras', true)
+          break
+      }
     }
-  }
-
-  update () {
-    this.handleJoystickMove()
   }
 }
