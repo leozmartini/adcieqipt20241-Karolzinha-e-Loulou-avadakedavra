@@ -13,6 +13,8 @@ export default class mapa extends Phaser.Scene {
     // Carregar as imagens do mapa
     this.load.image('geral', './assets/mapa/tilesetnovo.png')
     this.load.image('masmorra', './assets/mapa/tilesetnovodungeon.png')
+    this.load.image('moveisbruxa', './assets/mapa/moveisbruxa.png')
+    this.load.image('torre', './assets/mapa/torrebruxa.png')
 
     // Carregar spritesheets
     this.load.spritesheet('personagem', './assets/personagens/personagem.png', { frameWidth: 32, frameHeight: 32 })
@@ -33,71 +35,77 @@ export default class mapa extends Phaser.Scene {
     // Cria os tilesets do mapa
     this.tilesetFloresta = this.tilemapMapa.addTilesetImage('geral')
     this.tilesetMasmorra = this.tilemapMapa.addTilesetImage('masmorra')
+    this.tilesetMoveisbruxa = this.tilemapMapa.addTilesetImage('moveisbruxa')
+    this.tilesetTorre = this.tilemapMapa.addTilesetImage('torre')
 
-    // Camadas do mapa
+    // Camadas do mapa e personagem
     this.layerchaofaltando = this.tilemapMapa.createLayer('chaofaltando', [this.tilesetFloresta])
-    this.layerchao = this.tilemapMapa.createLayer('chao', [this.tilesetFloresta])
+    this.layerchao = this.tilemapMapa.createLayer('chao', [this.tilesetFloresta, this.tilesetMasmorra])
+    this.layerparedemsm = this.tilemapMapa.createLayer('paredemsm', [this.tilesetMasmorra])
+    this.layerarbustos = this.tilemapMapa.createLayer('arbustos', [this.tilesetFloresta, this.tilesetMasmorra, this.tilesetMoveisbruxa, this.tilesetTorre])
     this.layerflores = this.tilemapMapa.createLayer('flores', [this.tilesetFloresta])
-    this.layerarvores = this.tilemapMapa.createLayer('arvores', [this.tilesetFloresta])
-    this.layercerca = this.tilemapMapa.createLayer('cerca', [this.tilesetFloresta])
-    this.layerlampada = this.tilemapMapa.createLayer('lampada', [this.tilesetFloresta])
 
-    // Criação do personagem e suas animações
-    this.personagem = this.physics.add.sprite(1000, 400, 'personagem')
+    this.personagem = this.physics.add.sprite(1232, 233, 'personagem')
+
+    this.layerpersonagempassa = this.tilemapMapa.createLayer('personagempassa', [this.tilesetFloresta, this.tilesetMasmorra])
+    this.layertorre = this.tilemapMapa.createLayer('torre', [this.tilesetTorre])
+
+    // Torna a cena acessível globalmente
+    window.scene = this
 
     // Movimentos do personagem
     this.anims.create({
       key: 'personagem-parado-frente',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 7, end: 12 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 6, end: 11 }),
       frameRate: 8,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-parado-direita',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 49, end: 54 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 48, end: 53 }),
       frameRate: 8,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-parado-esquerda',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 28, end: 33 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 27, end: 32 }),
       frameRate: 8,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-parado-tras',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 70, end: 75 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 69, end: 74 }),
       frameRate: 8,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-frente',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 1, end: 6 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 0, end: 5 }),
       frameRate: 8,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-esquerda',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 22, end: 27 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 23, end: 26 }),
       frameRate: 8,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-direita',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 43, end: 48 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 42, end: 47 }),
       frameRate: 8,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-tras',
-      frames: this.anims.generateFrameNumbers('personagem', { start: 64, end: 69 }),
+      frames: this.anims.generateFrameNumbers('personagem', { start: 65, end: 68 }),
       frameRate: 8,
       repeat: -1
     })
@@ -123,6 +131,7 @@ export default class mapa extends Phaser.Scene {
 
   update () {
     this.handleJoystickMove()
+    this.checkTeleport()
   }
 
   handleJoystickMove () {
@@ -170,6 +179,15 @@ export default class mapa extends Phaser.Scene {
           this.personagem.anims.play('personagem-parado-tras', true)
           break
       }
+    }
+  }
+
+  checkTeleport () {
+    // Verifica se o personagem está nas proximidades das coordenadas especificadas para ida
+    if (this.personagem.x >= 2275 && this.personagem.x <= 2295 && this.personagem.y >= 678 && this.personagem.y <= 698) {
+      this.personagem.setPosition(541, 1236)
+    } else if (this.personagem.x >= 1220 && this.personagem.x <= 1240 && this.personagem.y >= 333 && this.personagem.y <= 353) {
+      this.personagem.setPosition(2288, 376)
     }
   }
 }
