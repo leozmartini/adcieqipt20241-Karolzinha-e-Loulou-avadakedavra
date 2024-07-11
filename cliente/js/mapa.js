@@ -2,11 +2,10 @@ export default class mapa extends Phaser.Scene {
   constructor () {
     super('mapa')
     this.direcaoAtual = 'frente' // Variável para armazenar a direção atual do personagem
+    this.teleportCooldown = false // Variável para gerenciar o cooldown do teleporte
   }
 
   preload () {
-    // Carregar os sons
-
     // Carregar o mapa
     this.load.tilemapTiledJSON('mapa', './assets/mapa/umapinha.json')
 
@@ -18,6 +17,7 @@ export default class mapa extends Phaser.Scene {
 
     // Carregar spritesheets
     this.load.spritesheet('personagem', './assets/personagens/personagem.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('blocoquebra', './assets/animaçoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
@@ -26,8 +26,6 @@ export default class mapa extends Phaser.Scene {
   create () {
     // Adiciona ponteiro
     this.input.addPointer(3)
-
-    // Adiciona o som de fundo e de objetos
 
     // Cria objeto do mapa
     this.tilemapMapa = this.make.tilemap({ key: 'mapa' })
@@ -45,10 +43,22 @@ export default class mapa extends Phaser.Scene {
     this.layerarbustos = this.tilemapMapa.createLayer('arbustos', [this.tilesetFloresta, this.tilesetMasmorra, this.tilesetMoveisbruxa, this.tilesetTorre])
     this.layerflores = this.tilemapMapa.createLayer('flores', [this.tilesetFloresta])
 
-    this.personagem = this.physics.add.sprite(1232, 233, 'personagem')
+    this.personagem = this.physics.add.sprite(2285, 410, 'personagem')
 
     this.layerpersonagempassa = this.tilemapMapa.createLayer('personagempassa', [this.tilesetFloresta, this.tilesetMasmorra])
     this.layertorre = this.tilemapMapa.createLayer('torre', [this.tilesetTorre])
+
+    this.blocoquebra = this.physics.add.sprite(400, 848, 'blocoquebra')
+
+    // Define o atributo do tileset para gerar colisão
+    this.layerparedemsm.setCollisionByProperty({ collides: true })
+    // Adiciona colisão entre o personagem e as paredes
+    this.physics.add.collider(this.personagem, this.layerparedemsm)
+
+    // Define o atributo do tileset para gerar colisão
+    this.layerarbustos.setCollisionByProperty({ collides: true })
+    // Adiciona colisão entre o personagem e as paredes
+    this.physics.add.collider(this.personagem, this.layerarbustos)
 
     // Torna a cena acessível globalmente
     window.scene = this
@@ -183,11 +193,31 @@ export default class mapa extends Phaser.Scene {
   }
 
   checkTeleport () {
+    // Verifica se o cooldown está ativo
+    if (this.teleportCooldown) {
+      return
+    }
+
     // Verifica se o personagem está nas proximidades das coordenadas especificadas para ida
     if (this.personagem.x >= 2275 && this.personagem.x <= 2295 && this.personagem.y >= 678 && this.personagem.y <= 698) {
-      this.personagem.setPosition(541, 1236)
-    } else if (this.personagem.x >= 1220 && this.personagem.x <= 1240 && this.personagem.y >= 333 && this.personagem.y <= 353) {
-      this.personagem.setPosition(2288, 376)
+      this.personagem.setPosition(560, 1236)
+      this.activateTeleportCooldown()
     }
+
+    // Verifica se o personagem está nas proximidades das coordenadas especificadas para volta
+    else if (this.personagem.x >= 535 && this.personagem.x <= 550 && this.personagem.y >= 1226 && this.personagem.y <= 1246) {
+      this.personagem.setPosition(2285, 688)
+      this.activateTeleportCooldown()
+    }
+  }
+
+  activateTeleportCooldown () {
+    this.teleportCooldown = true
+    this.time.addEvent({
+      delay: 500, // Tempo de cooldown em milissegundos
+      callback: () => {
+        this.teleportCooldown = false
+      }
+    })
   }
 }
