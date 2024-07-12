@@ -43,12 +43,12 @@ export default class mapa extends Phaser.Scene {
     this.layerarbustos = this.tilemapMapa.createLayer('arbustos', [this.tilesetFloresta, this.tilesetMasmorra, this.tilesetMoveisbruxa, this.tilesetTorre])
     this.layerflores = this.tilemapMapa.createLayer('flores', [this.tilesetFloresta])
 
+    this.blocoquebra = this.physics.add.sprite(400, 848, 'blocoquebra')
     this.personagem = this.physics.add.sprite(2285, 410, 'personagem')
 
     this.layerpersonagempassa = this.tilemapMapa.createLayer('personagempassa', [this.tilesetFloresta, this.tilesetMasmorra])
     this.layertorre = this.tilemapMapa.createLayer('torre', [this.tilesetTorre])
 
-    this.blocoquebra = this.physics.add.sprite(400, 848, 'blocoquebra')
 
     // Define o atributo do tileset para gerar colisão
     this.layerparedemsm.setCollisionByProperty({ collides: true })
@@ -208,6 +208,11 @@ export default class mapa extends Phaser.Scene {
     else if (this.personagem.x >= 535 && this.personagem.x <= 550 && this.personagem.y >= 1226 && this.personagem.y <= 1246) {
       this.personagem.setPosition(2285, 688)
       this.activateTeleportCooldown()
+    }
+    // Verifica se o personagem está nas coordenadas especificadas
+    if (this.personagem.x === 528 && this.personagem.y === 272) {
+      // Define a nova posição do personagem
+      this.personagem.setPosition(2285, 410)
     }
   }
 
