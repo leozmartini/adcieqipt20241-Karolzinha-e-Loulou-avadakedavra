@@ -18,6 +18,7 @@ export default class mapa extends Phaser.Scene {
     // Carregar spritesheets
     this.load.spritesheet('personagem', './assets/personagens/personagem.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocoquebra', './assets/animaçoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
@@ -45,10 +46,17 @@ export default class mapa extends Phaser.Scene {
 
     this.blocoquebra = this.physics.add.sprite(400, 848, 'blocoquebra')
     this.personagem = this.physics.add.sprite(2285, 410, 'personagem')
+    this.aranha = this.physics.add.sprite(2285, 600, 'aranha')
+
+    // Define colisão entre o personagem e a aranha
+    this.physics.add.collider(this.personagem, this.aranha)
+
+    // Define o movimento da aranha para seguir o personagem
+    this.physics.add.collider(this.aranha, this.layerparedemsm)
+    this.physics.add.collider(this.aranha, this.layerarbustos)
 
     this.layerpersonagempassa = this.tilemapMapa.createLayer('personagempassa', [this.tilesetFloresta, this.tilesetMasmorra])
     this.layertorre = this.tilemapMapa.createLayer('torre', [this.tilesetTorre])
-
 
     // Define o atributo do tileset para gerar colisão
     this.layerparedemsm.setCollisionByProperty({ collides: true })
@@ -122,6 +130,24 @@ export default class mapa extends Phaser.Scene {
 
     this.personagem.anims.play('personagem-parado-frente')
 
+    // Movimentos inimigos
+
+    this.anims.create({
+      key: 'aranha-andando',
+      frames: this.anims.generateFrameNumbers('aranha', { start: 7, end: 10 }),
+      frameRate: 9,
+      repeat: -1
+    })
+
+    this.anims.create({
+      key: 'aranha-parada',
+      frames: this.anims.generateFrameNumbers('aranha', { start: 11, end: 14 }),
+      frameRate: 9,
+      repeat: -1
+    })
+
+    this.aranha.anims.play('aranha-parada')
+
     // Configuração do plugin do joystick virtual
     this.joystick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
       x: 120,
@@ -142,6 +168,7 @@ export default class mapa extends Phaser.Scene {
   update () {
     this.handleJoystickMove()
     this.checkTeleport()
+    this.moveAranha()
   }
 
   handleJoystickMove () {
@@ -224,5 +251,25 @@ export default class mapa extends Phaser.Scene {
         this.teleportCooldown = false
       }
     })
+  }
+
+  moveAranha () {
+    // Define a velocidade de movimento da aranha
+    const aranhaSpeed = 50
+
+    // Calcula a direção para mover a aranha em direção ao personagem
+    const dx = this.personagem.x - this.aranha.x
+    const dy = this.personagem.y - this.aranha.y
+    const angle = Math.atan2(dy, dx)
+
+    // Define a velocidade da aranha em direção ao personagem
+    this.aranha.setVelocity(Math.cos(angle) * aranhaSpeed, Math.sin(angle) * aranhaSpeed)
+
+    // Animação da aranha
+    if (this.aranha.body.velocity.x !== 0 || this.aranha.body.velocity.y !== 0) {
+      this.aranha.anims.play('aranha-andando', true)
+    } else {
+      this.aranha.anims.play('aranha-parada', true)
+    }
   }
 }
