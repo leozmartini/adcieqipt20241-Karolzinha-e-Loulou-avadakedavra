@@ -161,7 +161,7 @@ export default class mapa extends Phaser.Scene {
     this.cameras.main.startFollow(this.personagem)
 
     // Variáveis de velocidade e threshold
-    this.speed = 100 // Velocidade constante do personagem
+    this.speed = 150 // Velocidade constante do personagem
     this.threshold = 0.1 // Limite mínimo de força para considerar o movimento
   }
 
@@ -226,18 +226,28 @@ export default class mapa extends Phaser.Scene {
     }
 
     // Verifica se o personagem está nas proximidades das coordenadas especificadas para ida
-    if (this.personagem.x >= 2275 && this.personagem.x <= 2295 && this.personagem.y >= 678 && this.personagem.y <= 698) {
-      this.personagem.setPosition(560, 1236)
+    if (this.personagem.x >= 3093 && this.personagem.x <= 3095 && this.personagem.y === 816) {
+      this.personagem.setPosition(1840, 1935)
       this.activateTeleportCooldown()
     }
 
     // Verifica se o personagem está nas proximidades das coordenadas especificadas para volta
-    else if (this.personagem.x >= 535 && this.personagem.x <= 550 && this.personagem.y >= 1226 && this.personagem.y <= 1246) {
-      this.personagem.setPosition(2285, 688)
+    else if (this.personagem.x >= 1800 && this.personagem.x <= 1830 && this.personagem.y === 1936) {
+      this.personagem.setPosition(3089, 816)
       this.activateTeleportCooldown()
     }
-    // Verifica se o personagem está nas coordenadas especificadas
-    if (this.personagem.x === 528 && this.personagem.y === 272) {
+    // entra masmorra
+    if (this.personagem.x === 2544 && this.personagem.y <= 1778) {
+      // Define a nova posição do personagem
+      this.personagem.setPosition(578, 1200)
+    }
+    // volta masmorra
+    if (this.personagem.x >= 560 && this.personagem.x <= 592 && this.personagem.y === 1264) {
+      // Define a nova posição do personagem
+      this.personagem.setPosition(2544, 1780)
+    }
+    // sai masmorra
+    if (this.personagem.x === 560 && this.personagem.y === 272) {
       // Define a nova posição do personagem
       this.personagem.setPosition(2285, 410)
     }
