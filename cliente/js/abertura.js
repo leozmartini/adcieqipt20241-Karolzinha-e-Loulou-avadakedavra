@@ -31,8 +31,8 @@ export default class abertura extends Phaser.Scene {
           })
           .catch((error) => console.error(error))
 
-        globalThis.game.scene.stop('abertura')
-        globalThis.game.scene.start('sala')
+        this.scene.stop('abertura')
+        this.scene.start('sala')
       })
 
     this.anims.create({

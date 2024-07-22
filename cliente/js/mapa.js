@@ -17,6 +17,8 @@ export default class mapa extends Phaser.Scene {
 
     // Carregar spritesheets
     this.load.spritesheet('roxo', './assets/personagens/roxo.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('menino', './assets/personagens/menino.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('menina', './assets/personagens/menina.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('roxoataque', './assets/personagens/roxoataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('vermelho', './assets/personagens/vermelho.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocoquebra', './assets/animaçoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
@@ -78,8 +80,8 @@ export default class mapa extends Phaser.Scene {
       })
 
       this.blocoquebra = this.physics.add.sprite(590, 1442, 'blocoquebra')
-      this.personagemLocal = this.physics.add.sprite(2285, 410, 'roxo')
-      this.personagemRemoto = this.add.sprite(2285, 600, 'vermelho')
+      this.personagemLocal = this.physics.add.sprite(2285, 410, 'menino')
+      this.personagemRemoto = this.add.sprite(2285, 600, 'menina')
     } else if (globalThis.game.jogadores.segundo === globalThis.game.socket.id) {
       globalThis.game.localConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.localConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -110,15 +112,15 @@ export default class mapa extends Phaser.Scene {
       })
 
       // Cria os sprites dos personagens local e remoto
-      this.personagemLocal = this.physics.add.sprite(2285, 410, 'vermelho')
-      this.personagemRemoto = this.add.sprite(2285, 600, 'roxo')
+      this.personagemLocal = this.physics.add.sprite(2285, 410, 'menina')
+      this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
     } else {
       // Gera mensagem de log para informar que o usuário está fora da partida
       console.log('Usuário não é o primeiro ou o segundo jogador. Não é possível iniciar a partida. ')
 
       // Encerra a cena atual e inicia a cena de sala
-      globalThis.game.scene.stop('mapa')
-      globalThis.game.scene.start('sala')
+      this.scene.stop('mapa')
+      this.scene.start('sala')
     }
 
     // Define colisão entre o personagem e a aranha
@@ -147,56 +149,56 @@ export default class mapa extends Phaser.Scene {
     // Movimentos do personagem
     this.anims.create({
       key: 'personagem-parado-frente',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 0, end: 11 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 6, end: 11 }),
       frameRate: 12,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-parado-direita',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 66, end: 77 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 48, end: 53 }),
       frameRate: 12,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-parado-esquerda',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 44, end: 55 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 27, end: 32 }),
       frameRate: 12,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-parado-tras',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 22, end: 34 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 69, end: 74 }),
       frameRate: 12,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-frente',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 12, end: 17 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 0, end: 5 }),
       frameRate: 12,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-esquerda',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 56, end: 61 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 21, end: 26 }),
       frameRate: 12,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-direita',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 78, end: 83 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 42, end: 47 }),
       frameRate: 12,
       repeat: -1
     })
 
     this.anims.create({
       key: 'personagem-andando-tras',
-      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 34, end: 39 }),
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 63, end: 68 }),
       frameRate: 12,
       repeat: -1
     })
@@ -359,4 +361,16 @@ export default class mapa extends Phaser.Scene {
       }
     })
   }
+
+  // finalTriste () {
+  // Encerra a cena atual e inicia a cena de final triste
+  // this.scene.stop('mapa')
+  // this.scene.start('finalTriste')
+  // }
+
+  // finalFeliz () {
+  // Encerra a cena atual e inicia a cena de final triste
+  // this.scene.stop('mapa')
+  // this.scene.start('finalFeliz')
+  // }
 }
