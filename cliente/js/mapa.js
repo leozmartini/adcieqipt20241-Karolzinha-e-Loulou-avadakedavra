@@ -21,8 +21,9 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('menina', './assets/personagens/menina.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('roxoataque', './assets/personagens/roxoataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('vermelho', './assets/personagens/vermelho.png', { frameWidth: 32, frameHeight: 32 })
-    this.load.spritesheet('blocoquebra', './assets/animaçoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
@@ -146,6 +147,25 @@ export default class mapa extends Phaser.Scene {
     // Torna a cena acessível globalmente
     window.scene = this
 
+    // Animação cristal //
+    this.anims.create({
+      key: 'cristal-girando',
+      frames: this.anims.generateFrameNumbers('cristal', {
+        start: 0,
+        end: 5
+      }),
+      frameRate: 10,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'cristal-coletado',
+      frames: this.anims.generateFrameNumbers('cristal', {
+        start: 6,
+        end: 10
+      }),
+      frameRate: 10,
+      repeat: 0
+    })
     // Movimentos do personagem
     this.anims.create({
       key: 'personagem-parado-frente',
