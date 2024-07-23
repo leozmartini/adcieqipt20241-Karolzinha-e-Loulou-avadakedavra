@@ -38,7 +38,7 @@ class Game extends Phaser.Game {
     this.scene.add('mapa', mapa)
     this.scene.add('finalFeliz', finalFeliz)
     this.scene.add('finalTriste', finalTriste)
-    this.scene.start('sala')
+    this.scene.start('abertura')
   }
 }
 

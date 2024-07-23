@@ -23,14 +23,14 @@ export default class abertura extends Phaser.Scene {
       .setInteractive()
       .on('pointerdown', () => {
         this.botao.setFrame(1)
-      })
-      .on('pointerup', () => {
+
         navigator.mediaDevices.getUserMedia({ video: false, audio: true })
           .then((stream) => {
             globalThis.game.midias = stream
           })
           .catch((error) => console.error(error))
-
+      })
+      .on('pointerup', () => {
         this.scene.stop('abertura')
         this.scene.start('sala')
       })

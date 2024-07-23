@@ -80,7 +80,7 @@ export default class mapa extends Phaser.Scene {
         globalThis.game.remoteConnection.addIceCandidate(candidate)
       })
 
-      this.blocoquebra = this.physics.add.sprite(590, 1442, 'blocoquebra')
+      // this.blocoquebra = this.physics.add.sprite(590, 1442, 'blocoquebra')
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menino')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menina')
     } else if (globalThis.game.jogadores.segundo === globalThis.game.socket.id) {
@@ -115,13 +115,6 @@ export default class mapa extends Phaser.Scene {
       // Cria os sprites dos personagens local e remoto
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menina')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
-    } else {
-      // Gera mensagem de log para informar que o usuário está fora da partida
-      console.log('Usuário não é o primeiro ou o segundo jogador. Não é possível iniciar a partida. ')
-
-      // Encerra a cena atual e inicia a cena de sala
-      this.scene.stop('mapa')
-      this.scene.start('sala')
     }
 
     // Define colisão entre o personagem e a aranha
@@ -144,10 +137,7 @@ export default class mapa extends Phaser.Scene {
     // Adiciona colisão entre o personagem e as paredes
     this.physics.add.collider(this.personagemLocal, this.layerarbustos)
 
-    // Torna a cena acessível globalmente
-    window.scene = this
-
-    // Animação cristal //
+    // Animação cristal
     this.anims.create({
       key: 'cristal-girando',
       frames: this.anims.generateFrameNumbers('cristal', {
@@ -166,6 +156,37 @@ export default class mapa extends Phaser.Scene {
       frameRate: 10,
       repeat: 0
     })
+
+    this.cristais = [
+      {
+        indice: 1,
+        x: this.personagemLocal.x + 100,
+        y: this.personagemLocal.y + 100
+      },
+      {
+        indice: 2,
+        x: 200,
+        y: 200
+      }
+    ]
+    this.cristais.forEach((cristal) => {
+      cristal.objeto = this.physics.add.sprite(cristal.x, cristal.y, 'cristal')
+      cristal.objeto.anims.play('cristal-girando')
+      cristal.overlap = this.physics.add.overlap(this.personagemLocal, cristal.objeto, () => {
+        // Desativa o overlap entre personagem e nuvem
+        cristal.overlap.destroy()
+
+        // Anima a nuvem
+        cristal.objeto.anims.play('cristal-coletado')
+
+        // Assim que a animação terminar...
+        cristal.objeto.once('animationcomplete', () => {
+          // Desativa a nuvem (imagem e colisão)
+          cristal.objeto.disableBody(true, true)
+        })
+      }, null, this)
+    })
+
     // Movimentos do personagem
     this.anims.create({
       key: 'personagem-parado-frente',
@@ -256,6 +277,7 @@ export default class mapa extends Phaser.Scene {
     // Variáveis de velocidade e threshold
     this.speed = 150 // Velocidade constante do personagem
     this.threshold = 0.1 // Limite mínimo de força para considerar o movimento
+
     globalThis.game.dadosJogo.onmessage = (event) => {
       const dados = JSON.parse(event.data)
 
@@ -264,6 +286,15 @@ export default class mapa extends Phaser.Scene {
         this.personagemRemoto.x = dados.personagem.x
         this.personagemRemoto.y = dados.personagem.y
         this.personagemRemoto.setFrame(dados.personagem.frame)
+      }
+
+      if (dados.cristais) {
+        this.cristais.forEach((cristal, i) => {
+          // Desativa as nuvens que não estão visíveis
+          if (!dados.cristais[i].visible) {
+            cristal.objeto.disableBody(true, true)
+          }
+        })
       }
     }
   }
@@ -282,6 +313,14 @@ export default class mapa extends Phaser.Scene {
               frame: this.personagemLocal.frame.name
             }
           }))
+
+          if (this.cristais) {
+            globalThis.game.dadosJogo.send(JSON.stringify({
+              cristais: this.cristais.map(cristal => (cristal => ({
+                visible: cristal.objeto.visible
+              }))(cristal))
+            }))
+          }
         }
       }
     } catch (error) {
@@ -350,6 +389,7 @@ export default class mapa extends Phaser.Scene {
       this.personagemLocal.setPosition(1840, 1935)
       this.activateTeleportCooldown()
     }
+
     // Verifica se o personagem está nas proximidades das coordenadas especificadas para volta
     else if (this.personagemLocal.x >= 1800 && this.personagemLocal.x <= 1830 && this.personagemLocal.y === 1936) {
       this.personagemLocal.setPosition(3089, 816)
