@@ -24,7 +24,8 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
-
+    this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
 
@@ -47,11 +48,495 @@ export default class mapa extends Phaser.Scene {
 
     // Camadas do mapa e personagem
     this.layerchaofaltando = this.tilemapMapa.createLayer('chaofaltando', [this.tilesetFloresta])
+    // Animações agua
+    this.anims.create({
+      key: 'agua-anim',
+      frames: this.anims.generateFrameNumbers('agua', {
+        start: 0,
+        end: 7
+      }),
+      frameRate: 8,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'aguaborda-anim',
+      frames: this.anims.generateFrameNumbers('aguaborda', {
+        start: 0,
+        end: 7
+      }),
+      frameRate: 8,
+      repeat: -1
+    })
+
+    // riozinho
+    this.rio = [
+      {
+        indice: 1,
+        x: 2352,
+        y: 976
+      },
+      {
+        indice: 2,
+        x: 2320,
+        y: 976
+      },
+      {
+        indice: 3,
+        x: 2288,
+        y: 976
+      },
+      {
+        indice: 4,
+        x: 2256,
+        y: 976
+      },
+      {
+        indice: 5,
+        x: 2224,
+        y: 976
+      },
+      {
+        indice: 6,
+        x: 2192,
+        y: 976
+      },
+      {
+        indice: 7,
+        x: 2160,
+        y: 976
+      },
+      {
+        indice: 8,
+        x: 2128,
+        y: 976
+      },
+      {
+        indice: 9,
+        x: 2096,
+        y: 976
+      },
+      {
+        indice: 10,
+        x: 2064,
+        y: 976
+      },
+      {
+        indice: 11,
+        x: 2032,
+        y: 976
+      },
+      {
+        indice: 12,
+        x: 2000,
+        y: 976
+      },
+      {
+        indice: 13,
+        x: 1968,
+        y: 976
+      },
+      {
+        indice: 14,
+        x: 1936,
+        y: 976
+      },
+      {
+        indice: 15,
+        x: 1904,
+        y: 976
+      },
+      {
+        indice: 16,
+        x: 1872,
+        y: 976
+      },
+      {
+        indice: 17,
+        x: 1840,
+        y: 976
+      },
+      {
+        indice: 18,
+        x: 1808,
+        y: 976
+      },
+      {
+        indice: 19,
+        x: 1776,
+        y: 976
+      },
+      {
+        indice: 20,
+        x: 2384,
+        y: 976
+      },
+      {
+        indice: 21,
+        x: 2416,
+        y: 976
+      },
+      {
+        indice: 22,
+        x: 2448,
+        y: 976
+      },
+      {
+        indice: 23,
+        x: 2480,
+        y: 976
+      },
+      {
+        indice: 24,
+        x: 2512,
+        y: 976
+      },
+      {
+        indice: 25,
+        x: 2544,
+        y: 976
+      },
+      {
+        indice: 26,
+        x: 2576,
+        y: 976
+      },
+      {
+        indice: 27,
+        x: 2608,
+        y: 976
+      },
+      {
+        indice: 28,
+        x: 2640,
+        y: 976
+      },
+      {
+        indice: 29,
+        x: 2672,
+        y: 976
+      },
+      {
+        indice: 30,
+        x: 2704,
+        y: 976
+      },
+      {
+        indice: 31,
+        x: 2352,
+        y: 1008
+      },
+      {
+        indice: 32,
+        x: 2320,
+        y: 1008
+      },
+      {
+        indice: 33,
+        x: 2288,
+        y: 1008
+      },
+      {
+        indice: 34,
+        x: 2256,
+        y: 1008
+      },
+      {
+        indice: 35,
+        x: 2224,
+        y: 1008
+      },
+      {
+        indice: 36,
+        x: 2192,
+        y: 1008
+      },
+      {
+        indice: 37,
+        x: 2160,
+        y: 1008
+      },
+      {
+        indice: 38,
+        x: 2128,
+        y: 1008
+      },
+      {
+        indice: 39,
+        x: 2096,
+        y: 1008
+      },
+      {
+        indice: 40,
+        x: 2064,
+        y: 1008
+      },
+      {
+        indice: 41,
+        x: 2032,
+        y: 1008
+      },
+      {
+        indice: 42,
+        x: 2000,
+        y: 1008
+      },
+      {
+        indice: 43,
+        x: 1968,
+        y: 1008
+      },
+      {
+        indice: 44,
+        x: 1936,
+        y: 1008
+      },
+      {
+        indice: 45,
+        x: 1904,
+        y: 1008
+      },
+      {
+        indice: 46,
+        x: 1872,
+        y: 1008
+      },
+      {
+        indice: 47,
+        x: 1840,
+        y: 1008
+      },
+      {
+        indice: 48,
+        x: 1808,
+        y: 1008
+      },
+      {
+        indice: 49,
+        x: 1776,
+        y: 1008
+      },
+      {
+        indice: 50,
+        x: 2384,
+        y: 1008
+      },
+      {
+        indice: 51,
+        x: 2416,
+        y: 1008
+      },
+      {
+        indice: 52,
+        x: 2448,
+        y: 1008
+      },
+      {
+        indice: 53,
+        x: 2480,
+        y: 1008
+      },
+      {
+        indice: 54,
+        x: 2512,
+        y: 1008
+      },
+      {
+        indice: 55,
+        x: 2544,
+        y: 1008
+      },
+      {
+        indice: 56,
+        x: 2576,
+        y: 1008
+      },
+      {
+        indice: 57,
+        x: 2608,
+        y: 1008
+      },
+      {
+        indice: 58,
+        x: 2640,
+        y: 1008
+      },
+      {
+        indice: 59,
+        x: 2672,
+        y: 1008
+      },
+      {
+        indice: 60,
+        x: 2704,
+        y: 1008
+      }
+    ]
+    this.rio.forEach((agua) => {
+      agua.objeto = this.physics.add.sprite(agua.x, agua.y, 'aguaborda')
+      agua.objeto.anims.play('agua-anim')
+    })
+    this.rioborda = [
+      {
+        indice: 1,
+        x: 2352,
+        y: 944
+      },
+      {
+        indice: 2,
+        x: 2320,
+        y: 944
+      },
+      {
+        indice: 3,
+        x: 2288,
+        y: 944
+      },
+      {
+        indice: 4,
+        x: 2256,
+        y: 944
+      },
+      {
+        indice: 5,
+        x: 2224,
+        y: 944
+      },
+      {
+        indice: 6,
+        x: 2192,
+        y: 944
+      },
+      {
+        indice: 7,
+        x: 2160,
+        y: 944
+      },
+      {
+        indice: 8,
+        x: 2128,
+        y: 944
+      },
+      {
+        indice: 9,
+        x: 2096,
+        y: 944
+      },
+      {
+        indice: 10,
+        x: 2064,
+        y: 944
+      },
+      {
+        indice: 11,
+        x: 2032,
+        y: 944
+      },
+      {
+        indice: 12,
+        x: 2000,
+        y: 944
+      },
+      {
+        indice: 13,
+        x: 1968,
+        y: 944
+      },
+      {
+        indice: 14,
+        x: 1936,
+        y: 944
+      },
+      {
+        indice: 15,
+        x: 1904,
+        y: 944
+      },
+      {
+        indice: 16,
+        x: 1872,
+        y: 944
+      },
+      {
+        indice: 17,
+        x: 1840,
+        y: 944
+      },
+      {
+        indice: 18,
+        x: 1808,
+        y: 944
+      },
+      {
+        indice: 19,
+        x: 1776,
+        y: 944
+      },
+      {
+        indice: 20,
+        x: 2384,
+        y: 944
+      },
+      {
+        indice: 21,
+        x: 2416,
+        y: 944
+      },
+      {
+        indice: 22,
+        x: 2448,
+        y: 944
+      },
+      {
+        indice: 23,
+        x: 2480,
+        y: 944
+      },
+      {
+        indice: 24,
+        x: 2512,
+        y: 944
+      },
+      {
+        indice: 25,
+        x: 2544,
+        y: 944
+      },
+      {
+        indice: 26,
+        x: 2576,
+        y: 944
+      },
+      {
+        indice: 27,
+        x: 2608,
+        y: 944
+      },
+      {
+        indice: 28,
+        x: 2640,
+        y: 944
+      },
+      {
+        indice: 29,
+        x: 2672,
+        y: 944
+      },
+      {
+        indice: 30,
+        x: 2704,
+        y: 944
+      }
+    ]
+    this.rioborda.forEach((aguaborda) => {
+      aguaborda.objeto = this.physics.add.sprite(aguaborda.x, aguaborda.y, 'aguaborda')
+      aguaborda.objeto.anims.play('aguaborda-anim')
+    })
+
     this.layerchao = this.tilemapMapa.createLayer('chao', [this.tilesetFloresta, this.tilesetMasmorra])
     this.layerparedemsm = this.tilemapMapa.createLayer('paredemsm', [this.tilesetMasmorra])
     this.layerarbustos = this.tilemapMapa.createLayer('arbustos', [this.tilesetFloresta, this.tilesetMasmorra, this.tilesetMoveisbruxa, this.tilesetTorre])
     this.layerflores = this.tilemapMapa.createLayer('flores', [this.tilesetFloresta])
-
+    
     if (globalThis.game.jogadores.primeiro === globalThis.game.socket.id) {
       globalThis.game.remoteConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.remoteConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -130,7 +615,7 @@ export default class mapa extends Phaser.Scene {
     // Define o atributo do tileset para gerar colisão
     this.layerparedemsm.setCollisionByProperty({ collides: true })
     // Adiciona colisão entre o personagem e as paredes
-    this.physics.add.collider(this.personagemLocal, this.layerparedemsm)
+    // this.physics.add.collider(this.personagemLocal, this.layerparedemsm)
 
     // Define o atributo do tileset para gerar colisão
     this.layerarbustos.setCollisionByProperty({ collides: true })
@@ -160,13 +645,83 @@ export default class mapa extends Phaser.Scene {
     this.cristais = [
       {
         indice: 1,
-        x: this.personagemLocal.x + 100,
-        y: this.personagemLocal.y + 100
+        x: 2320,
+        y: 602
       },
       {
         indice: 2,
-        x: 200,
-        y: 200
+        x: 2320,
+        y: 660
+      },
+      {
+        indice: 3,
+        x: 2320,
+        y: 789
+      },
+      {
+        indice: 4,
+        x: 2320,
+        y: 816
+      },
+      {
+        indice: 5,
+        x: 2201,
+        y: 816
+      },
+      {
+        indice: 6,
+        x: 2062,
+        y: 816
+      },
+      {
+        indice: 7,
+        x: 1858,
+        y: 816
+      },
+      {
+        indice: 8,
+        x: 2418,
+        y: 850
+      },
+      {
+        indice: 9,
+        x: 2531,
+        y: 816
+      },
+      {
+        indice: 10,
+        x: 2640,
+        y: 816
+      },
+      {
+        indice: 11,
+        x: 2418,
+        y: 1035
+      },
+      {
+        indice: 12,
+        x: 2204,
+        y: 1072
+      },
+      {
+        indice: 13,
+        x: 1840,
+        y: 1072
+      },
+      {
+        indice: 14,
+        x: 2045,
+        y: 1072
+      },
+      {
+        indice: 15,
+        x: 2535,
+        y: 1104
+      },
+      {
+        indice: 16,
+        x: 2535,
+        y: 1104
       }
     ]
     this.cristais.forEach((cristal) => {
@@ -340,6 +895,9 @@ export default class mapa extends Phaser.Scene {
 
       this.personagemLocal.setVelocity(velocityX, velocityY)
 
+      console.log('x: ', this.personagemLocal.x)
+      console.log('y: ', this.personagemLocal.y)
+
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
         if (velocityX > 0) {
@@ -394,21 +952,6 @@ export default class mapa extends Phaser.Scene {
     else if (this.personagemLocal.x >= 1800 && this.personagemLocal.x <= 1830 && this.personagemLocal.y === 1936) {
       this.personagemLocal.setPosition(3089, 816)
       this.activateTeleportCooldown()
-    }
-    // entra masmorra
-    if (this.personagemLocal.x === 2544 && this.personagemLocal.y <= 1778) {
-      // Define a nova posição do personagem
-      this.personagemLocal.setPosition(578, 1200)
-    }
-    // volta masmorra
-    if (this.personagemLocal.x >= 560 && this.personagemLocal.x <= 592 && this.personagemLocal.y === 1264) {
-      // Define a nova posição do personagem
-      this.personagemLocal.setPosition(2544, 1780)
-    }
-    // sai masmorra
-    if (this.personagemLocal.x === 560 && this.personagemLocal.y === 272) {
-      // Define a nova posição do personagem
-      this.personagemLocal.setPosition(2285, 410)
     }
   }
 
