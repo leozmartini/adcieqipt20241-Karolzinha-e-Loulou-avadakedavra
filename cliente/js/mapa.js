@@ -369,6 +369,256 @@ export default class mapa extends Phaser.Scene {
         indice: 60,
         x: 2704,
         y: 1008
+      },
+      {
+        indice: 61,
+        x: 3536,
+        y: 400
+      },
+      {
+        indice: 62,
+        x: 3504,
+        y: 400
+      },
+      {
+        indice: 63,
+        x: 3472,
+        y: 400
+      },
+      {
+        indice: 64,
+        x: 3440,
+        y: 400
+      },
+      {
+        indice: 65,
+        x: 3408,
+        y: 400
+      },
+      {
+        indice: 66,
+        x: 3376,
+        y: 400
+      },
+      {
+        indice: 67,
+        x: 3344,
+        y: 400
+      },
+      {
+        indice: 68,
+        x: 3536,
+        y: 368
+      },
+      {
+        indice: 69,
+        x: 3504,
+        y: 368
+      },
+      {
+        indice: 70,
+        x: 3472,
+        y: 368
+      },
+      {
+        indice: 71,
+        x: 3440,
+        y: 368
+      },
+      {
+        indice: 72,
+        x: 3408,
+        y: 368
+      },
+      {
+        indice: 73,
+        x: 3376,
+        y: 368
+      },
+      {
+        indice: 74,
+        x: 3344,
+        y: 368
+      },
+      {
+        indice: 75,
+        x: 3312,
+        y: 368
+      },
+      {
+        indice: 76,
+        x: 3280,
+        y: 368
+      },
+      {
+        indice: 77,
+        x: 3536,
+        y: 336
+      },
+      {
+        indice: 78,
+        x: 3504,
+        y: 336
+      },
+      {
+        indice: 79,
+        x: 3472,
+        y: 336
+      },
+      {
+        indice: 81,
+        x: 3408,
+        y: 336
+      },
+      {
+        indice: 82,
+        x: 3376,
+        y: 336
+      },
+      {
+        indice: 83,
+        x: 3344,
+        y: 336
+      },
+      {
+        indice: 84,
+        x: 3312,
+        y: 336
+      },
+      {
+        indice: 85,
+        x: 3280,
+        y: 336
+      },
+      {
+        indice: 86,
+        x: 3536,
+        y: 304
+      },
+      {
+        indice: 87,
+        x: 3504,
+        y: 304
+      },
+      {
+        indice: 88,
+        x: 3472,
+        y: 304
+      },
+      {
+        indice: 90,
+        x: 3408,
+        y: 304
+      },
+      {
+        indice: 91,
+        x: 3376,
+        y: 304
+      },
+      {
+        indice: 92,
+        x: 3344,
+        y: 304
+      },
+      {
+        indice: 93,
+        x: 3312,
+        y: 304
+      },
+      {
+        indice: 94,
+        x: 3280,
+        y: 304
+      },
+      {
+        indice: 95,
+        x: 3536,
+        y: 272
+      },
+      {
+        indice: 96,
+        x: 3504,
+        y: 272
+      },
+      {
+        indice: 97,
+        x: 3472,
+        y: 272
+      },
+      {
+        indice: 98,
+        x: 3440,
+        y: 272
+      },
+      {
+        indice: 99,
+        x: 3408,
+        y: 272
+      },
+      {
+        indice: 100,
+        x: 3376,
+        y: 272
+      },
+      {
+        indice: 101,
+        x: 3344,
+        y: 272
+      },
+      {
+        indice: 102,
+        x: 3312,
+        y: 272
+      },
+      {
+        indice: 103,
+        x: 3280,
+        y: 272
+      },
+      {
+        indice: 80,
+        x: 3408,
+        y: 240
+      },
+      {
+        indice: 89,
+        x: 3376,
+        y: 240
+      },
+      {
+        indice: 104,
+        x: 3344,
+        y: 240
+      },
+      {
+        indice: 105,
+        x: 3312,
+        y: 240
+      },
+      {
+        indice: 106,
+        x: 3280,
+        y: 240
+      },
+      {
+        indice: 107,
+        x: 3408,
+        y: 208
+      },
+      {
+        indice: 108,
+        x: 3376,
+        y: 208
+      },
+      {
+        indice: 109,
+        x: 3344,
+        y: 208
+      },
+      {
+        indice: 110,
+        x: 3312,
+        y: 208
       }
     ]
     this.rio.forEach((agua) => {
@@ -525,6 +775,51 @@ export default class mapa extends Phaser.Scene {
         indice: 30,
         x: 2704,
         y: 944
+      },
+      {
+        indice: 31,
+        x: 3536,
+        y: 240
+      },
+      {
+        indice: 32,
+        x: 3504,
+        y: 240
+      },
+      {
+        indice: 33,
+        x: 3472,
+        y: 240
+      },
+      {
+        indice: 34,
+        x: 3440,
+        y: 240
+      },
+      {
+        indice: 35,
+        x: 3408,
+        y: 176
+      },
+      {
+        indice: 36,
+        x: 3376,
+        y: 176
+      },
+      {
+        indice: 37,
+        x: 3344,
+        y: 176
+      },
+      {
+        indice: 38,
+        x: 3312,
+        y: 176
+      },
+      {
+        indice: 38,
+        x: 3280,
+        y: 208
       }
     ]
     this.rioborda.forEach((aguaborda) => {
@@ -536,7 +831,7 @@ export default class mapa extends Phaser.Scene {
     this.layerparedemsm = this.tilemapMapa.createLayer('paredemsm', [this.tilesetMasmorra])
     this.layerarbustos = this.tilemapMapa.createLayer('arbustos', [this.tilesetFloresta, this.tilesetMasmorra, this.tilesetMoveisbruxa, this.tilesetTorre])
     this.layerflores = this.tilemapMapa.createLayer('flores', [this.tilesetFloresta])
-    
+
     if (globalThis.game.jogadores.primeiro === globalThis.game.socket.id) {
       globalThis.game.remoteConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.remoteConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -671,12 +966,12 @@ export default class mapa extends Phaser.Scene {
       {
         indice: 6,
         x: 2062,
-        y: 816
+        y: 848
       },
       {
         indice: 7,
         x: 1858,
-        y: 816
+        y: 848
       },
       {
         indice: 8,
@@ -691,7 +986,7 @@ export default class mapa extends Phaser.Scene {
       {
         indice: 10,
         x: 2640,
-        y: 816
+        y: 848
       },
       {
         indice: 11,
@@ -701,6 +996,11 @@ export default class mapa extends Phaser.Scene {
       {
         indice: 12,
         x: 2204,
+        y: 1072
+      },
+      {
+        indice: 17,
+        x: 2318,
         y: 1072
       },
       {
@@ -722,6 +1022,51 @@ export default class mapa extends Phaser.Scene {
         indice: 16,
         x: 2535,
         y: 1104
+      },
+      {
+        indice: 18,
+        x: 2702,
+        y: 1136
+      },
+      {
+        indice: 19,
+        x: 2859,
+        y: 1136
+      },
+      {
+        indice: 20,
+        x: 3218,
+        y: 848
+      },
+      {
+        indice: 21,
+        x: 3413,
+        y: 848
+      },
+      {
+        indice: 22,
+        x: 3403,
+        y: 718
+      },
+      {
+        indice: 23,
+        x: 3403,
+        y: 594
+      },
+      {
+        indice: 24,
+        x: 3570,
+        y: 848
+      },
+      {
+        indice: 25,
+        x: 3820,
+        y: 746
+      },
+      {
+        indice: 26,
+        x: 3511,
+        y: 957
       }
     ]
     this.cristais.forEach((cristal) => {
