@@ -16,16 +16,16 @@ export default class mapa extends Phaser.Scene {
     this.load.image('torre', './assets/mapa/torrebruxa.png')
 
     // Carregar spritesheets
-    this.load.spritesheet('roxo', './assets/personagens/roxo.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('menino', './assets/personagens/menino.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('menina', './assets/personagens/menina.png', { frameWidth: 32, frameHeight: 32 })
-    this.load.spritesheet('roxoataque', './assets/personagens/roxoataque.png', { frameWidth: 64, frameHeight: 64 })
-    this.load.spritesheet('vermelho', './assets/personagens/vermelho.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('meninoataque', './assets/personagens/meninoataque.png', { frameWidth: 64, frameHeight: 64 })
+    this.load.spritesheet('meninaataque', './assets/personagens/meninaataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('botao', './assets/simbolos/botao.png', { frameWidth: 32, frameHeight: 32 })
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
 
@@ -1122,12 +1122,24 @@ export default class mapa extends Phaser.Scene {
       frameRate: 12,
       repeat: -1
     })
+    this.anims.create({
+      key: 'personagem-ataque-frente',
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key + 'ataque', { start: 0, end: 5 }),
+      frameRate: 12,
+      repeat: 1
+    })
 
     this.anims.create({
       key: 'personagem-andando-esquerda',
       frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 21, end: 26 }),
       frameRate: 12,
       repeat: -1
+    })
+    this.anims.create({
+      key: 'personagem-ataque-esquerda',
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key + 'ataque', { start: 6, end: 11 }),
+      frameRate: 12,
+      repeat: 1
     })
 
     this.anims.create({
@@ -1136,12 +1148,24 @@ export default class mapa extends Phaser.Scene {
       frameRate: 12,
       repeat: -1
     })
+    this.anims.create({
+      key: 'personagem-ataque-direita',
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key + 'ataque', { start: 12, end: 17 }),
+      frameRate: 12,
+      repeat: 1
+    })
 
     this.anims.create({
       key: 'personagem-andando-tras',
       frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key, { start: 63, end: 68 }),
       frameRate: 12,
       repeat: -1
+    })
+    this.anims.create({
+      key: 'personagem-ataque-tras',
+      frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key + 'ataque', { start: 18, end: 23 }),
+      frameRate: 12,
+      repeat: 1
     })
 
     // Inicia a animação padrão do personagem
@@ -1170,6 +1194,16 @@ export default class mapa extends Phaser.Scene {
       base: this.add.circle(120, 360, 50, 0x888888),
       thumb: this.add.circle(120, 360, 25, 0xcccccc)
     })
+    this.botao = this.add.sprite(600, 310, 'botao', 0)
+      .setScrollFactor(0)
+      .setInteractive()
+      .on('pointerdown', () => {
+        this.botao.setFrame(1)
+        this.personagemLocal.anims.play('personagem-ataque-' + this.direcaoAtual)
+      })
+      .on('pointerup', () => {
+        this.botao.setFrame(0)
+      })
     // Câmera
     this.cameras.main.startFollow(this.personagemLocal)
     this.cameras.main.setZoom(1.5)
