@@ -1125,8 +1125,7 @@ export default class mapa extends Phaser.Scene {
     this.anims.create({
       key: 'personagem-ataque-frente',
       frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key + 'ataque', { start: 0, end: 5 }),
-      frameRate: 12,
-      repeat: 1
+      frameRate: 12
     })
 
     this.anims.create({
@@ -1138,8 +1137,7 @@ export default class mapa extends Phaser.Scene {
     this.anims.create({
       key: 'personagem-ataque-esquerda',
       frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key + 'ataque', { start: 6, end: 11 }),
-      frameRate: 12,
-      repeat: 1
+      frameRate: 12
     })
 
     this.anims.create({
@@ -1151,8 +1149,7 @@ export default class mapa extends Phaser.Scene {
     this.anims.create({
       key: 'personagem-ataque-direita',
       frames: this.anims.generateFrameNumbers(this.personagemLocal.texture.key + 'ataque', { start: 12, end: 17 }),
-      frameRate: 12,
-      repeat: 1
+      frameRate: 12
     })
 
     this.anims.create({
@@ -1199,7 +1196,11 @@ export default class mapa extends Phaser.Scene {
       .setInteractive()
       .on('pointerdown', () => {
         this.botao.setFrame(1)
+        this.personagemAtacando = true
         this.personagemLocal.anims.play('personagem-ataque-' + this.direcaoAtual)
+          .on('animationcomplete', () => {
+            this.personagemAtacando = false
+          })
       })
       .on('pointerup', () => {
         this.botao.setFrame(0)
@@ -1260,6 +1261,7 @@ export default class mapa extends Phaser.Scene {
     } catch (error) {
       console.error('Erro ao enviar os dados do jogo: ', error)
     }
+
     this.handleJoystickMove()
     this.checkTeleport()
   }
@@ -1280,18 +1282,26 @@ export default class mapa extends Phaser.Scene {
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
         if (velocityX > 0) {
-          this.personagemLocal.anims.play('personagem-andando-direita', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-andando-direita', true)
+          }
           this.direcaoAtual = 'direita'
         } else {
-          this.personagemLocal.anims.play('personagem-andando-esquerda', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-andando-esquerda', true)
+          }
           this.direcaoAtual = 'esquerda'
         }
       } else {
         if (velocityY > 0) {
-          this.personagemLocal.anims.play('personagem-andando-frente', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-andando-frente', true)
+          }
           this.direcaoAtual = 'frente'
         } else {
-          this.personagemLocal.anims.play('personagem-andando-tras', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-andando-tras', true)
+          }
           this.direcaoAtual = 'tras'
         }
       }
@@ -1300,16 +1310,24 @@ export default class mapa extends Phaser.Scene {
       this.personagemLocal.setVelocity(0)
       switch (this.direcaoAtual) {
         case 'frente':
-          this.personagemLocal.anims.play('personagem-parado-frente', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-parado-frente', true)
+          }
           break
         case 'direita':
-          this.personagemLocal.anims.play('personagem-parado-direita', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-parado-direita', true)
+          }
           break
         case 'esquerda':
-          this.personagemLocal.anims.play('personagem-parado-esquerda', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-parado-esquerda', true)
+          }
           break
         case 'tras':
-          this.personagemLocal.anims.play('personagem-parado-tras', true)
+          if (!this.personagemAtacando) {
+            this.personagemLocal.anims.play('personagem-parado-tras', true)
+          }
           break
       }
     }
