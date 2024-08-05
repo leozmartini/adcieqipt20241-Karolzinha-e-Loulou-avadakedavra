@@ -898,13 +898,64 @@ export default class mapa extends Phaser.Scene {
       this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
     }
 
-    // Define colisão entre o personagem e a aranha
-    // this.physics.add.collider(this.personagemLocal, this.aranha)
+    // Movimentos da aranha
+    this.anims.create({
+      key: 'aranha-andando',
+      frames: this.anims.generateFrameNumbers('aranha', { start: 7, end: 10 }),
+      frameRate: 9,
+      repeat: -1
+    })
+
+    this.anims.create({
+      key: 'aranha-some',
+      frames: this.anims.generateFrameNumbers('aranha', { start: 0, end: 6 }),
+      frameRate: 9
+    })
 
     // Define o movimento da aranha para seguir o personagem
-    this.aranha = this.physics.add.sprite(1976, 880, 'aranha')
-    this.physics.add.collider(this.aranha, this.layerparedemsm)
-    this.physics.add.collider(this.aranha, this.layerarbustos)
+    this.aranhas = [
+      {
+        x: 1976,
+        y: 880
+      },
+      {
+        x: 2000,
+        y: 900
+      },
+      {
+        x: 2100,
+        y: 900
+      },
+      {
+        x: 2200,
+        y: 900
+      }
+    ]
+    this.aranhas.forEach((aranha) => {
+      aranha.sprite = this.physics.add.sprite(aranha.x, aranha.y, 'aranha')
+      aranha.sprite.anims.play('aranha-andando')
+      this.physics.add.collider(aranha.sprite, this.layerparedemsm)
+      this.physics.add.collider(aranha.sprite, this.layerarbustos)
+
+      aranha.colisao = this.physics.add.overlap(aranha.sprite, this.personagemLocal, () => {
+        this.physics.world.removeCollider(aranha.colisao)
+
+        if (this.personagemLocal.texture.key.match(/ataque/)) {
+          aranha.sprite.anims.play('aranha-some')
+          aranha.sprite.once('animationcomplete', () => {
+            aranha.sprite.disableBody(true, true)
+          })
+        } else {
+          this.personagemLocal.setTint(0xff0000)
+          setTimeout(() => {
+            this.physics.world.colliders.add(aranha.colisao)
+            this.personagemLocal.setTint(0xffffff)
+          }, 1000)
+
+          this.vida.setFrame(this.vida.frame.name + 1)
+        }
+      }, null, this)
+    })
 
     this.layerpersonagempassa = this.tilemapMapa.createLayer('personagempassa', [this.tilesetFloresta, this.tilesetMasmorra])
     this.layertorre = this.tilemapMapa.createLayer('torre', [this.tilesetTorre])
@@ -921,21 +972,6 @@ export default class mapa extends Phaser.Scene {
     this.layerarbustos.setCollisionByProperty({ collides: true })
     // Adiciona colisão entre o personagem e as paredes
     this.physics.add.collider(this.personagemLocal, this.layerarbustos)
-
-    this.personagemColideAranha = this.physics.add.collider(this.aranha, this.personagemLocal, () => {
-      this.physics.world.removeCollider(this.personagemColideAranha)
-      this.personagemLocal.setTint(0xff0000)
-      setTimeout(() => {
-        this.physics.world.colliders.add(this.personagemColideAranha)
-        this.personagemLocal.setTint(0xffffff)
-      }, 1000)
-
-      this.vida.setFrame(this.vida.frame.name + 1)
-      if (this.vida.frame.name === 3) {
-        this.scene.stop('mapa')
-        this.scene.start('finalTriste')
-      }
-    }, null, this)
 
     // Animação cristal
     this.anims.create({
@@ -1188,21 +1224,6 @@ export default class mapa extends Phaser.Scene {
     // Inicia a animação padrão do personagem
     this.personagemLocal.anims.play('personagem-parado-frente')
 
-    // Movimentos da aranha
-    this.anims.create({
-      key: 'aranha-andando',
-      frames: this.anims.generateFrameNumbers('aranha', { start: 7, end: 10 }),
-      frameRate: 9,
-      repeat: -1
-    })
-
-    this.anims.create({
-      key: 'aranha-parada',
-      frames: this.anims.generateFrameNumbers('aranha', { start: 11, end: 14 }),
-      frameRate: 9,
-      repeat: -1
-    })
-
     // Configuração do plugin do joystick virtual
     this.joystick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
       x: 200,
@@ -1251,6 +1272,16 @@ export default class mapa extends Phaser.Scene {
           }
         })
       }
+
+      if (dados.aranhas) {
+        // Atualiza a visibilidade dos cartões
+        this.aranhas.forEach((aranha, i) => {
+          // Atualiza a visibilidade do cartão
+          if (!dados.aranhas[i].visible) {
+            aranha.sprite.disableBody(true, true)
+          }
+        })
+      }
     }
   }
 
@@ -1276,15 +1307,69 @@ export default class mapa extends Phaser.Scene {
               }))(cristal))
             }))
           }
+
+          if (this.aranhas) {
+            globalThis.game.dadosJogo.send(JSON.stringify({
+              aranhas: this.aranhas.map(aranha => (aranha => ({
+                visible: aranha.sprite.visible
+              }))(aranha))
+            }))
+          }
         }
       }
     } catch (error) {
       console.error('Erro ao enviar os dados do jogo: ', error)
     }
 
+    if (this.aranhas) {
+      this.aranhas.forEach((aranha) => {
+        // aranha segue personagem mais próximo
+        const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
+          this.personagemLocal.x,
+          aranha.sprite.x,
+          this.personagemLocal.y,
+          aranha.sprite.y
+        )
+
+        const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
+          this.personagemRemoto.x,
+          aranha.sprite.x,
+          this.personagemRemoto.y,
+          aranha.sprite.y
+        )
+
+        // Por padrão, o primeiro jogador é o alvo
+        let alvo = this.personagemLocal
+        if (hipotenusaPersonagemLocal > hipotenusaPersonagemRemoto) {
+          // Jogador 2 é perseguido pelo aranha
+          alvo = this.personagemRemoto
+        }
+
+        // Sentido no eixo X
+        const diffX = alvo.x - aranha.sprite.x
+        if (diffX >= 10) {
+          aranha.sprite.setVelocityX(40)
+        } else if (diffX <= 10) {
+          aranha.sprite.setVelocityX(-40)
+        }
+
+        // Sentido no eixo Y
+        const diffY = alvo.y - aranha.sprite.y
+        if (diffY >= 10) {
+          aranha.sprite.setVelocityY(40)
+        } else if (diffY <= 10) {
+          aranha.sprite.setVelocityY(-40)
+        }
+      })
+    }
+
     this.handleJoystickMove()
     this.checkTeleport()
-    this.moveAranha()
+
+    if (this.vida.frame.name === 3) {
+      this.scene.stop('mapa')
+      this.scene.start('finalTriste')
+    }
   }
 
   handleJoystickMove () {
@@ -1297,8 +1382,8 @@ export default class mapa extends Phaser.Scene {
 
       this.personagemLocal.setVelocity(velocityX, velocityY)
 
-      console.log('x: ', this.personagemLocal.x)
-      console.log('y: ', this.personagemLocal.y)
+      // console.log('x: ', this.personagemLocal.x)
+      // console.log('y: ', this.personagemLocal.y)
 
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
@@ -1382,35 +1467,4 @@ export default class mapa extends Phaser.Scene {
       }
     })
   }
-
-  moveAranha () {
-    // Define a velocidade de movimento da aranha
-    const aranhaSpeed = 50
-
-    // Calcula a direção para mover a aranha em direção ao personagem
-    const dx = this.personagemLocal.x - this.aranha.x
-    const dy = this.personagemLocal.y - this.aranha.y
-    const angle = Math.atan2(dy, dx)
-
-    // Define a velocidade da aranha em direção ao personagem
-    this.aranha.setVelocity(Math.cos(angle) * aranhaSpeed, Math.sin(angle) * aranhaSpeed)
-
-    // Animação da aranha
-    if (this.aranha.body.velocity.x !== 0 || this.aranha.body.velocity.y !== 0) {
-      this.aranha.anims.play('aranha-andando', true)
-    } else {
-      this.aranha.anims.play('aranha-parada', true)
-    }
-  }
-  // finalTriste () {
-  // Encerra a cena atual e inicia a cena de final triste
-  // this.scene.stop('mapa')
-  // this.scene.start('finalTriste')
-  // }
-
-  // finalFeliz () {
-  // Encerra a cena atual e inicia a cena de final triste
-  // this.scene.stop('mapa')
-  // this.scene.start('finalFeliz')
-  // }
 }
