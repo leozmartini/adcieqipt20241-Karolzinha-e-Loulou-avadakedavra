@@ -25,7 +25,8 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
-    this.load.spritesheet('botao', './assets/simbolos/botao.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('vida', './assets/vida.png', { frameWidth: 146, frameHeight: 36 })
+
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
 
@@ -901,11 +902,15 @@ export default class mapa extends Phaser.Scene {
     // this.physics.add.collider(this.personagemLocal, this.aranha)
 
     // Define o movimento da aranha para seguir o personagem
-    // this.physics.add.collider(this.aranha, this.layerparedemsm)
-    // this.physics.add.collider(this.aranha, this.layerarbustos)
+    this.aranha = this.physics.add.sprite(1976, 880, 'aranha')
+    this.physics.add.collider(this.aranha, this.layerparedemsm)
+    this.physics.add.collider(this.aranha, this.layerarbustos)
 
     this.layerpersonagempassa = this.tilemapMapa.createLayer('personagempassa', [this.tilesetFloresta, this.tilesetMasmorra])
     this.layertorre = this.tilemapMapa.createLayer('torre', [this.tilesetTorre])
+
+    this.vida = this.add.sprite(220, 100, 'vida', 0)
+      .setScrollFactor(0)
 
     // Define o atributo do tileset para gerar colisão
     this.layerparedemsm.setCollisionByProperty({ collides: true })
@@ -916,6 +921,21 @@ export default class mapa extends Phaser.Scene {
     this.layerarbustos.setCollisionByProperty({ collides: true })
     // Adiciona colisão entre o personagem e as paredes
     this.physics.add.collider(this.personagemLocal, this.layerarbustos)
+
+    this.personagemColideAranha = this.physics.add.collider(this.aranha, this.personagemLocal, () => {
+      this.physics.world.removeCollider(this.personagemColideAranha)
+      this.personagemLocal.setTint(0xff0000)
+      setTimeout(() => {
+        this.physics.world.colliders.add(this.personagemColideAranha)
+        this.personagemLocal.setTint(0xffffff)
+      }, 1000)
+
+      this.vida.setFrame(this.vida.frame.name + 1)
+      if (this.vida.frame.name === 3) {
+        this.scene.stop('mapa')
+        this.scene.start('finalTriste')
+      }
+    }, null, this)
 
     // Animação cristal
     this.anims.create({
@@ -1264,6 +1284,7 @@ export default class mapa extends Phaser.Scene {
 
     this.handleJoystickMove()
     this.checkTeleport()
+    this.moveAranha()
   }
 
   handleJoystickMove () {
@@ -1362,6 +1383,25 @@ export default class mapa extends Phaser.Scene {
     })
   }
 
+  moveAranha () {
+    // Define a velocidade de movimento da aranha
+    const aranhaSpeed = 50
+
+    // Calcula a direção para mover a aranha em direção ao personagem
+    const dx = this.personagemLocal.x - this.aranha.x
+    const dy = this.personagemLocal.y - this.aranha.y
+    const angle = Math.atan2(dy, dx)
+
+    // Define a velocidade da aranha em direção ao personagem
+    this.aranha.setVelocity(Math.cos(angle) * aranhaSpeed, Math.sin(angle) * aranhaSpeed)
+
+    // Animação da aranha
+    if (this.aranha.body.velocity.x !== 0 || this.aranha.body.velocity.y !== 0) {
+      this.aranha.anims.play('aranha-andando', true)
+    } else {
+      this.aranha.anims.play('aranha-parada', true)
+    }
+  }
   // finalTriste () {
   // Encerra a cena atual e inicia a cena de final triste
   // this.scene.stop('mapa')
