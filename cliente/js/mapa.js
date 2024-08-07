@@ -21,6 +21,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('meninoataque', './assets/personagens/meninoataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('meninaataque', './assets/personagens/meninaataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('portao', './assets/animacoes/portao.png', { frameWidth: 96, frameHeight: 64 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
@@ -862,6 +863,7 @@ export default class mapa extends Phaser.Scene {
       })
 
       // this.blocoquebra = this.physics.add.sprite(590, 1442, 'blocoquebra')
+      this.portao = this.physics.add.sprite(3824, 678, 'portao')
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menino')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menina')
     } else if (globalThis.game.jogadores.segundo === globalThis.game.socket.id) {
@@ -915,20 +917,20 @@ export default class mapa extends Phaser.Scene {
     // Define o movimento da aranha para seguir o personagem
     this.aranhas = [
       {
-        x: 1976,
+        x: 2039,
+        y: 784
+      },
+      {
+        x: 1978,
         y: 880
       },
       {
-        x: 2000,
-        y: 900
+        x: 2619,
+        y: 784
       },
       {
-        x: 2100,
-        y: 900
-      },
-      {
-        x: 2200,
-        y: 900
+        x: 2640,
+        y: 880
       }
     ]
     this.aranhas.forEach((aranha) => {
@@ -1012,12 +1014,12 @@ export default class mapa extends Phaser.Scene {
       {
         indice: 4,
         x: 2320,
-        y: 816
+        y: 848
       },
       {
         indice: 5,
         x: 2201,
-        y: 816
+        y: 848
       },
       {
         indice: 6,
@@ -1037,7 +1039,7 @@ export default class mapa extends Phaser.Scene {
       {
         indice: 9,
         x: 2531,
-        y: 816
+        y: 848
       },
       {
         indice: 10,
@@ -1052,22 +1054,22 @@ export default class mapa extends Phaser.Scene {
       {
         indice: 12,
         x: 2204,
-        y: 1072
+        y: 1104
       },
       {
         indice: 17,
         x: 2318,
-        y: 1072
+        y: 1104
       },
       {
         indice: 13,
         x: 1840,
-        y: 1072
+        y: 1104
       },
       {
         indice: 14,
         x: 2045,
-        y: 1072
+        y: 1104
       },
       {
         indice: 15,
@@ -1382,8 +1384,8 @@ export default class mapa extends Phaser.Scene {
 
       this.personagemLocal.setVelocity(velocityX, velocityY)
 
-      // console.log('x: ', this.personagemLocal.x)
-      // console.log('y: ', this.personagemLocal.y)
+      console.log('x: ', this.personagemLocal.x)
+      console.log('y: ', this.personagemLocal.y)
 
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
