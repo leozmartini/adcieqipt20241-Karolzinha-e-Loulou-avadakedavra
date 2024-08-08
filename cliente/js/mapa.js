@@ -903,6 +903,7 @@ export default class mapa extends Phaser.Scene {
     this.portao = this.physics.add.sprite(560, 304, 'portao')
     this.blocovazio = this.physics.add.sprite(2320, 747, 'blocovazio')
     this.physics.add.overlap(this.personagemLocal, this.blocovazio, () => {
+      globalThis.game.dadosJogo.send(JSON.stringify({ aranhasAndam: true }))
       this.aranhasAndam = true
     }, null, this)
 
@@ -1264,6 +1265,10 @@ export default class mapa extends Phaser.Scene {
 
     globalThis.game.dadosJogo.onmessage = (event) => {
       const dados = JSON.parse(event.data)
+
+      if (dados.aranhasAndam) {
+        this.aranhasAndam = true
+      }
 
       if (dados.gameover) {
         this.scene.stop('mapa')
