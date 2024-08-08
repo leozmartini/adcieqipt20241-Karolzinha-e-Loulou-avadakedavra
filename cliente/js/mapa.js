@@ -3,6 +3,7 @@ export default class mapa extends Phaser.Scene {
     super('mapa')
     this.direcaoAtual = 'frente' // Variável para armazenar a direção atual do personagem
     this.teleportCooldown = false // Variável para gerenciar o cooldown do teleporte
+    this.aranhasAndam = false
   }
 
   preload () {
@@ -27,6 +28,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('vida', './assets/vida.png', { frameWidth: 146, frameHeight: 36 })
+    this.load.spritesheet('blocovazio', './assets/blocovazio.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
@@ -863,7 +865,6 @@ export default class mapa extends Phaser.Scene {
       })
 
       // this.blocoquebra = this.physics.add.sprite(590, 1442, 'blocoquebra')
-      this.portao = this.physics.add.sprite(3824, 678, 'portao')
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menino')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menina')
     } else if (globalThis.game.jogadores.segundo === globalThis.game.socket.id) {
@@ -899,6 +900,11 @@ export default class mapa extends Phaser.Scene {
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menina')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
     }
+    this.portao = this.physics.add.sprite(560, 304, 'portao')
+    this.blocovazio = this.physics.add.sprite(2320, 747, 'blocovazio')
+    this.physics.add.overlap(this.personagemLocal, this.blocovazio, () => {
+      this.aranhasAndam = true
+    }, null, this)
 
     // Movimentos da aranha
     this.anims.create({
@@ -968,7 +974,7 @@ export default class mapa extends Phaser.Scene {
     // Define o atributo do tileset para gerar colisão
     this.layerparedemsm.setCollisionByProperty({ collides: true })
     // Adiciona colisão entre o personagem e as paredes
-    // this.physics.add.collider(this.personagemLocal, this.layerparedemsm)
+    this.physics.add.collider(this.personagemLocal, this.layerparedemsm)
 
     // Define o atributo do tileset para gerar colisão
     this.layerarbustos.setCollisionByProperty({ collides: true })
@@ -1259,6 +1265,11 @@ export default class mapa extends Phaser.Scene {
     globalThis.game.dadosJogo.onmessage = (event) => {
       const dados = JSON.parse(event.data)
 
+      if (dados.gameover) {
+        this.scene.stop('mapa')
+        this.scene.start('finalTriste')
+      }
+
       // Verifica se os dados recebidos contêm informações sobre o personagem
       if (dados.personagem) {
         this.personagemRemoto.x = dados.personagem.x
@@ -1323,7 +1334,7 @@ export default class mapa extends Phaser.Scene {
       console.error('Erro ao enviar os dados do jogo: ', error)
     }
 
-    if (this.aranhas) {
+    if (this.aranhas && this.aranhasAndam) {
       this.aranhas.forEach((aranha) => {
         // aranha segue personagem mais próximo
         const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
@@ -1365,13 +1376,20 @@ export default class mapa extends Phaser.Scene {
       })
     }
 
-    this.handleJoystickMove()
-    this.checkTeleport()
-
     if (this.vida.frame.name === 3) {
+      globalThis.game.dadosJogo.send(JSON.stringify({ gameover: true }))
       this.scene.stop('mapa')
       this.scene.start('finalTriste')
     }
+
+    const cristaisColetados = this.cristais.filter(cristal => !cristal.objeto.active).length
+    if (cristaisColetados === this.cristais.length) {
+      this.scene.stop('mapa')
+      this.scene.start('finalFeliz')
+    }
+
+    this.handleJoystickMove()
+    this.checkTeleport()
   }
 
   handleJoystickMove () {
@@ -1448,8 +1466,8 @@ export default class mapa extends Phaser.Scene {
     }
 
     // Verifica se o personagem está nas proximidades das coordenadas especificadas para ida
-    if (this.personagemLocal.x >= 3093 && this.personagemLocal.x <= 3095 && this.personagemLocal.y === 816) {
-      this.personagemLocal.setPosition(1840, 1935)
+    if (this.personagemLocal.x === 3824 && this.personagemLocal.y === 656) {
+      this.personagemLocal.setPosition(574, 1300)
       this.activateTeleportCooldown()
     }
 
