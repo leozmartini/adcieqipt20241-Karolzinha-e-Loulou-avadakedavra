@@ -25,6 +25,8 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('portao', './assets/animacoes/portao.png', { frameWidth: 96, frameHeight: 64 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('bau', './assets/animacoes/bau.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('pocao-rosa', '.assets/animacoes/pocaorosa.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('vida', './assets/vida.png', { frameWidth: 146, frameHeight: 36 })
@@ -900,6 +902,55 @@ export default class mapa extends Phaser.Scene {
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menina')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
     }
+    this.anims.create({
+      key: 'bau-brilhando',
+      frames: this.anims.generateFrameNumbers('bau', { start: 0, end: 4 }),
+      frameRate: 10,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'bau-abrindo',
+      frames: this.anims.generateFrameNumbers('bau', { start: 5, end: 12 }),
+      frameRate: 10
+    })
+    this.anims.create({
+      key: 'pocao-rosa-brilhando',
+      frames: this.anims.generateFrameNumbers('pocao-rosa', { start: 0, end: 5 }),
+      frameRate: 10,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'pocao-rosa-coletado',
+      frames: this.anims.generateFrameNumbers('pocao-rosa', { start: 6, end: 9 }),
+      frameRate: 10
+    })
+
+    this.bau = this.physics.add.sprite(2865, 816, 'bau')
+    this.bau.anims.play('bau-brilhando')
+    this.physics.add.collider(this.bau, this.layerparedemsm)
+    this.physics.add.collider(this.bau, this.layerarbustos)
+    this.physics.add.collider(this.personagemLocal, this.bau, () => {
+      this.bau.anims.play('bau-abrindo')
+      // Assim que a animação terminar...
+      // this.bau.once('animationcomplete', () => {
+      // this.bau.disableBody(true, true)
+      // const pocao = this.physics.add.sprite(2900, 816, 'pocao-rosa')
+      // pocao.anims.play('pocao-rosa-brilhando')
+      // this.physics.add.collider(pocao, this.layerparedemsm)
+      // this.physics.add.collider(pocao, this.layerarbustos)
+
+      // Colisão para coleta da poção
+      // const overlap = this.physics.add.overlap(this.personagemLocal, pocao, () => {
+      // overlap.destroy()
+      // Destrói o detector de overlap após a coleta
+      // pocao.anims.play('pocao-rosa-coletado')
+      // pocao.once('animationcomplete', () => {
+      // pocao.destroy()
+      // Remove a poção da cena após a animação de coleta
+      // })
+      // }, null, this)
+      // }, this)
+    }, null, this)
     this.portao = this.physics.add.sprite(560, 304, 'portao')
     this.blocovazio = this.physics.add.sprite(2320, 747, 'blocovazio')
     this.physics.add.overlap(this.personagemLocal, this.blocovazio, () => {
