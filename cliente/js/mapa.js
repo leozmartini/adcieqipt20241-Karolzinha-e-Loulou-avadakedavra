@@ -4,6 +4,7 @@ export default class mapa extends Phaser.Scene {
     this.direcaoAtual = 'frente' // Variável para armazenar a direção atual do personagem
     this.teleportCooldown = false // Variável para gerenciar o cooldown do teleporte
     this.aranhasAndam = false
+    this.batsAndam = false
   }
 
   preload () {
@@ -24,6 +25,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('portao', './assets/animacoes/portao.png', { frameWidth: 96, frameHeight: 64 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('bat', './assets/inimigos/bat.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('bau', './assets/animacoes/bau.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('pocao-rosa', '.assets/animacoes/pocaorosa.png', { frameWidth: 28, frameHeight: 56 })
@@ -31,6 +33,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('vida', './assets/vida.png', { frameWidth: 146, frameHeight: 36 })
     this.load.spritesheet('blocovazio', './assets/blocovazio.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('blocovazio2', './assets/blocovazio2.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
@@ -957,8 +960,31 @@ export default class mapa extends Phaser.Scene {
       globalThis.game.dadosJogo.send(JSON.stringify({ aranhasAndam: true }))
       this.aranhasAndam = true
     }, null, this)
+    this.blocovazio2 = this.physics.add.sprite(2864, 1008, 'blocovazio2')
+    this.physics.add.overlap(this.personagemLocal, this.blocovazio2, () => {
+      globalThis.game.dadosJogo.send(JSON.stringify({ batsAndam: true }))
+      this.batsAndam = true
+    }, null, this)
 
-    // Movimentos da aranha
+    // Movimentos du zinimigo
+    this.anims.create({
+      key: 'bat-esquerda',
+      frames: this.anims.generateFrameNumbers('bat', { start: 0, end: 4 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'bat-direita',
+      frames: this.anims.generateFrameNumbers('bat', { start: 5, end: 9 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'bat-some',
+      frames: this.anims.generateFrameNumbers('bat', { start: 10, end: 15 }),
+      frameRate: 9
+    })
+
     this.anims.create({
       key: 'aranha-andando',
       frames: this.anims.generateFrameNumbers('aranha', { start: 7, end: 10 }),
@@ -972,7 +998,7 @@ export default class mapa extends Phaser.Scene {
       frameRate: 9
     })
 
-    // Define o movimento da aranha para seguir o personagem
+    // Define o movimento du zinimigo para seguir o personagem
     this.aranhas = [
       {
         x: 2039,
@@ -1016,7 +1042,49 @@ export default class mapa extends Phaser.Scene {
         }
       }, null, this)
     })
+    this.bats = [
+      {
+        x: 3003,
+        y: 923
+      },
+      {
+        x: 2959,
+        y: 868
+      },
+      {
+        x: 2803,
+        y: 871
+      },
+      {
+        x: 3031,
+        y: 829
+      }
+    ]
+    this.bats.forEach((bat) => {
+      bat.sprite = this.physics.add.sprite(bat.x, bat.y, 'bat')
+      bat.sprite.anims.play('bat-esquerda')
+      this.physics.add.collider(bat.sprite, this.layerparedemsm)
+      this.physics.add.collider(bat.sprite, this.layerarbustos)
 
+      bat.colisao = this.physics.add.overlap(bat.sprite, this.personagemLocal, () => {
+        this.physics.world.removeCollider(bat.colisao)
+
+        if (this.personagemLocal.texture.key.match(/ataque/)) {
+          bat.sprite.anims.play('bat-some')
+          bat.sprite.once('animationcomplete', () => {
+            bat.sprite.disableBody(true, true)
+          })
+        } else {
+          this.personagemLocal.setTint(0xff0000)
+          setTimeout(() => {
+            this.physics.world.colliders.add(bat.colisao)
+            this.personagemLocal.setTint(0xffffff)
+          }, 1000)
+
+          this.vida.setFrame(this.vida.frame.name + 1)
+        }
+      }, null, this)
+    })
     this.layerpersonagempassa = this.tilemapMapa.createLayer('personagempassa', [this.tilesetFloresta, this.tilesetMasmorra])
     this.layertorre = this.tilemapMapa.createLayer('torre', [this.tilesetTorre])
 
@@ -1320,6 +1388,9 @@ export default class mapa extends Phaser.Scene {
       if (dados.aranhasAndam) {
         this.aranhasAndam = true
       }
+      if (dados.batsAndam) {
+        this.batsAndam = true
+      }
 
       if (dados.gameover) {
         this.scene.stop('mapa')
@@ -1335,7 +1406,6 @@ export default class mapa extends Phaser.Scene {
 
       if (dados.cristais) {
         this.cristais.forEach((cristal, i) => {
-          // Desativa as nuvens que não estão visíveis
           if (!dados.cristais[i].visible) {
             cristal.objeto.disableBody(true, true)
           }
@@ -1343,11 +1413,16 @@ export default class mapa extends Phaser.Scene {
       }
 
       if (dados.aranhas) {
-        // Atualiza a visibilidade dos cartões
         this.aranhas.forEach((aranha, i) => {
-          // Atualiza a visibilidade do cartão
           if (!dados.aranhas[i].visible) {
             aranha.sprite.disableBody(true, true)
+          }
+        })
+      }
+      if (dados.bats) {
+        this.bats.forEach((bat, i) => {
+          if (!dados.bats[i].visible) {
+            bat.sprite.disableBody(true, true)
           }
         })
       }
@@ -1382,6 +1457,13 @@ export default class mapa extends Phaser.Scene {
               aranhas: this.aranhas.map(aranha => (aranha => ({
                 visible: aranha.sprite.visible
               }))(aranha))
+            }))
+          }
+          if (this.bats) {
+            globalThis.game.dadosJogo.send(JSON.stringify({
+              bats: this.bats.map(bat => (bat => ({
+                visible: bat.sprite.visible
+              }))(bat))
             }))
           }
         }
@@ -1428,6 +1510,47 @@ export default class mapa extends Phaser.Scene {
           aranha.sprite.setVelocityY(40)
         } else if (diffY <= 10) {
           aranha.sprite.setVelocityY(-40)
+        }
+      })
+    }
+    if (this.bats && this.batsAndam) {
+      this.bats.forEach((bat) => {
+        // bat segue personagem mais próximo
+        const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
+          this.personagemLocal.x,
+          bat.sprite.x,
+          this.personagemLocal.y,
+          bat.sprite.y
+        )
+
+        const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
+          this.personagemRemoto.x,
+          bat.sprite.x,
+          this.personagemRemoto.y,
+          bat.sprite.y
+        )
+
+        // Por padrão, o primeiro jogador é o alvo
+        let alvo = this.personagemLocal
+        if (hipotenusaPersonagemLocal > hipotenusaPersonagemRemoto) {
+          // Jogador 2 é perseguido pelo bat
+          alvo = this.personagemRemoto
+        }
+
+        // Sentido no eixo X
+        const diffX = alvo.x - bat.sprite.x
+        if (diffX >= 10) {
+          bat.sprite.setVelocityX(40)
+        } else if (diffX <= 10) {
+          bat.sprite.setVelocityX(-40)
+        }
+
+        // Sentido no eixo Y
+        const diffY = alvo.y - bat.sprite.y
+        if (diffY >= 10) {
+          bat.sprite.setVelocityY(40)
+        } else if (diffY <= 10) {
+          bat.sprite.setVelocityY(-40)
         }
       })
     }
