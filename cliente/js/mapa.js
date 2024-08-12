@@ -28,10 +28,13 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('bat', './assets/inimigos/bat.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('bau', './assets/animacoes/bau.png', { frameWidth: 32, frameHeight: 32 })
-    this.load.spritesheet('pocao-rosa', '.assets/animacoes/pocaorosa.png', { frameWidth: 28, frameHeight: 56 })
+    this.load.spritesheet('pocaorosa', './assets/animacoes/pocaorosa.png', { frameWidth: 28, frameHeight: 56 })
+    this.load.spritesheet('pocaoverde', './assets/animacoes/pocaoverde.png', { frameWidth: 28, frameHeight: 56 })
+    this.load.spritesheet('pocaoazul', './assets/animacoes/pocaoazul.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('vida', './assets/vida.png', { frameWidth: 146, frameHeight: 36 })
+    this.load.spritesheet('buraco', './assets/buraco.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio', './assets/blocovazio.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio2', './assets/blocovazio2.png', { frameWidth: 32, frameHeight: 32 })
 
@@ -917,43 +920,70 @@ export default class mapa extends Phaser.Scene {
       frameRate: 10
     })
     this.anims.create({
-      key: 'pocao-rosa-brilhando',
-      frames: this.anims.generateFrameNumbers('pocao-rosa', { start: 0, end: 5 }),
+      key: 'pocaorosa-brilhando',
+      frames: this.anims.generateFrameNumbers('pocaorosa', { start: 0, end: 5 }),
       frameRate: 10,
       repeat: -1
     })
     this.anims.create({
-      key: 'pocao-rosa-coletado',
-      frames: this.anims.generateFrameNumbers('pocao-rosa', { start: 6, end: 9 }),
+      key: 'pocaorosa-coletado',
+      frames: this.anims.generateFrameNumbers('pocaorosa', { start: 6, end: 9 }),
       frameRate: 10
     })
-
-    this.bau = this.physics.add.sprite(2865, 816, 'bau')
-    this.bau.anims.play('bau-brilhando')
-    this.physics.add.collider(this.bau, this.layerparedemsm)
-    this.physics.add.collider(this.bau, this.layerarbustos)
-    this.physics.add.collider(this.personagemLocal, this.bau, () => {
-      this.bau.anims.play('bau-abrindo')
-      // Assim que a animação terminar...
-      // this.bau.once('animationcomplete', () => {
-      // this.bau.disableBody(true, true)
-      // const pocao = this.physics.add.sprite(2900, 816, 'pocao-rosa')
-      // pocao.anims.play('pocao-rosa-brilhando')
-      // this.physics.add.collider(pocao, this.layerparedemsm)
-      // this.physics.add.collider(pocao, this.layerarbustos)
-
-      // Colisão para coleta da poção
-      // const overlap = this.physics.add.overlap(this.personagemLocal, pocao, () => {
-      // overlap.destroy()
-      // Destrói o detector de overlap após a coleta
-      // pocao.anims.play('pocao-rosa-coletado')
-      // pocao.once('animationcomplete', () => {
-      // pocao.destroy()
-      // Remove a poção da cena após a animação de coleta
-      // })
-      // }, null, this)
-      // }, this)
+    this.anims.create({
+      key: 'pocaoverde-brilhando',
+      frames: this.anims.generateFrameNumbers('pocaoverde', { start: 0, end: 5 }),
+      frameRate: 10,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'pocaoverde-coletado',
+      frames: this.anims.generateFrameNumbers('pocaoverde', { start: 6, end: 9 }),
+      frameRate: 10
+    })
+    this.buraco = this.physics.add.sprite(4048, 1104, 'buraco')
+    this.buracoOverlap = this.physics.add.overlap(this.personagemLocal, this.buraco, () => {
+      this.physics.world.removeCollider(this.buracoOverlap)
+      this.personagemLocal.setTint(0xff0000)
+      setTimeout(() => {
+        this.physics.world.collider.add(this.buracoOverlap)
+        this.personagemLocal.setTint(0xffffff)
+      }, 2000)
+      this.vida.setFrame(this.vida.frame.name + 1)
     }, null, this)
+
+    this.pocaorosa = this.physics.add.sprite(2865, 816, 'pocaorosa')
+    this.pocaorosa.anims.play('pocaorosa-brilhando')
+    this.pocaorosa.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaorosa, () => {
+      // Desativa o overlap entre personagem e nuvem
+      this.pocaorosa.overlap.destroy()
+
+      // Anima a nuvem
+      this.pocaorosa.anims.play('cristal-coletado')
+
+      // Assim que a animação terminar...
+      this.pocaorosa.once('animationcomplete', () => {
+        // Desativa a nuvem (imagem e colisão)
+        this.pocaorosa.disableBody(true, true)
+      })
+    }, null, this)
+
+    this.pocaoverde = this.physics.add.sprite(3440, 284, 'pocaoverde')
+    this.pocaoverde.anims.play('pocaoverde-brilhando')
+    this.pocaoverde.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaoverde, () => {
+      // Desativa o overlap entre personagem e nuvem
+      this.pocaoverde.overlap.destroy()
+
+      // Anima a nuvem
+      this.pocaoverde.anims.play('cristal-coletado')
+
+      // Assim que a animação terminar...
+      this.pocaoverde.once('animationcomplete', () => {
+        // Desativa a nuvem (imagem e colisão)
+        this.pocaoverde.disableBody(true, true)
+      })
+    }, null, this)
+
     this.portao = this.physics.add.sprite(560, 304, 'portao')
     this.blocovazio = this.physics.add.sprite(2320, 747, 'blocovazio')
     this.physics.add.overlap(this.personagemLocal, this.blocovazio, () => {
@@ -1251,6 +1281,21 @@ export default class mapa extends Phaser.Scene {
         indice: 26,
         x: 3511,
         y: 957
+      },
+      {
+        indice: 27,
+        x: 3169,
+        y: 1095
+      },
+      {
+        indice: 27,
+        x: 3512,
+        y: 1085
+      },
+      {
+        indice: 27,
+        x: 3893,
+        y: 1037
       }
     ]
     this.cristais.forEach((cristal) => {
