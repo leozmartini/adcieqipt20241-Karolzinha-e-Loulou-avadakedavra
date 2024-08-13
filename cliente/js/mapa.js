@@ -9,6 +9,14 @@ export default class mapa extends Phaser.Scene {
   }
 
   preload () {
+    this.load.audio('musga', './assets/audios/musga.mp3')
+    this.load.audio('coletar', './assets/audios/coletar.mp3')
+    this.load.audio('coletar2', './assets/audios/coletar2.mp3')
+    this.load.audio('bat', './assets/audios/bat.mp3')
+    this.load.audio('slimemorre', './assets/audios/slimemorre.mp3')
+    this.load.audio('slimepulo', './assets/audios/slimepulo.mp3')
+    this.load.audio('hurt', './assets/audios/hurt.mp3')
+
     // Carregar o mapa
     this.load.tilemapTiledJSON('mapa', './assets/mapa/umapinha.json')
 
@@ -51,6 +59,14 @@ export default class mapa extends Phaser.Scene {
   create () {
     // Adiciona ponteiro
     this.input.addPointer(3)
+
+    this.sound.add('musga', { loop: true }).play()
+    this.coletar = this.sound.add('coletar')
+    this.coletar2 = this.sound.add('coletar2')
+    this.batsom = this.sound.add('bat')
+    this.slimemorre = this.sound.add('slimemorre')
+    this.slimepulo = this.sound.add('slimepulo')
+    this.hurt = this.sound.add('hurt')
 
     // Cria objeto do mapa
     this.tilemapMapa = this.make.tilemap({ key: 'mapa' })
@@ -978,6 +994,7 @@ export default class mapa extends Phaser.Scene {
     this.blocosquebra.forEach((blocoquebra) => {
       blocoquebra.objeto = this.physics.add.sprite(blocoquebra.x, blocoquebra.y, 'blocoquebra')
       blocoquebra.overlap = this.physics.add.overlap(this.personagemLocal, blocoquebra.objeto, () => {
+        this.hurt.play()
         this.physics.world.removeCollider(blocoquebra.overlap)
         blocoquebra.objeto.anims.play('bloco-quebrando')
         this.personagemLocal.setTint(0xff0000)
@@ -1008,6 +1025,7 @@ export default class mapa extends Phaser.Scene {
     this.buracos.forEach((buraco) => {
       buraco.objeto = this.physics.add.sprite(buraco.x, buraco.y, 'buraco')
       buraco.overlap = this.physics.add.overlap(this.personagemLocal, buraco.objeto, () => {
+        this.hurt.play()
         this.physics.world.removeCollider(buraco.overlap)
         this.personagemLocal.setTint(0xff0000)
         setTimeout(() => {
@@ -1054,6 +1072,7 @@ export default class mapa extends Phaser.Scene {
     this.pocaorosa = this.physics.add.sprite(2865, 816, 'pocaorosa')
     this.pocaorosa.anims.play('pocaorosa-brilhando')
     this.pocaorosa.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaorosa, () => {
+      this.coletar2.play()
       // Desativa o overlap entre personagem e nuvem
       this.pocaorosa.overlap.destroy()
 
@@ -1070,6 +1089,7 @@ export default class mapa extends Phaser.Scene {
     this.pocaoverde = this.physics.add.sprite(3440, 284, 'pocaoverde')
     this.pocaoverde.anims.play('pocaoverde-brilhando')
     this.pocaoverde.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaoverde, () => {
+      this.coletar2 = this.sound.add('coletar2')
       // Desativa o overlap entre personagem e nuvem
       this.pocaoverde.overlap.destroy()
 
@@ -1085,6 +1105,7 @@ export default class mapa extends Phaser.Scene {
     this.pocaoazul = this.physics.add.sprite(3440, 284, 'pocaoazul')
     this.pocaoazul.anims.play('pocaoazul-brilhando')
     this.pocaoazul.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaoazul, () => {
+      this.coletar2 = this.sound.add('coletar2')
       // Desativa o overlap entre personagem e nuvem
       this.pocaoazul.overlap.destroy()
 
@@ -1198,11 +1219,13 @@ export default class mapa extends Phaser.Scene {
         this.physics.world.removeCollider(aranha.colisao)
 
         if (this.personagemLocal.texture.key.match(/ataque/)) {
+          this.batsom.play()
           aranha.sprite.anims.play('aranha-some')
           aranha.sprite.once('animationcomplete', () => {
             aranha.sprite.disableBody(true, true)
           })
         } else {
+          this.hurt.play()
           this.personagemLocal.setTint(0xff0000)
           setTimeout(() => {
             this.physics.world.colliders.add(aranha.colisao)
@@ -1241,11 +1264,13 @@ export default class mapa extends Phaser.Scene {
         this.physics.world.removeCollider(bat.colisao)
 
         if (this.personagemLocal.texture.key.match(/ataque/)) {
+          this.batsom.play()
           bat.sprite.anims.play('bat-some')
           bat.sprite.once('animationcomplete', () => {
             bat.sprite.disableBody(true, true)
           })
         } else {
+          this.hurt.play()
           this.personagemLocal.setTint(0xff0000)
           setTimeout(() => {
             this.physics.world.colliders.add(bat.colisao)
@@ -1281,6 +1306,7 @@ export default class mapa extends Phaser.Scene {
     this.slimes.forEach((slime) => {
       slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
       slime.sprite.anims.play('slime-andando')
+      this.slimepulo.play()
       this.physics.add.collider(slime.sprite, this.layerparedemsm)
       this.physics.add.collider(slime.sprite, this.layerarbustos)
 
@@ -1288,11 +1314,13 @@ export default class mapa extends Phaser.Scene {
         this.physics.world.removeCollider(slime.colisao)
 
         if (this.personagemLocal.texture.key.match(/ataque/)) {
+          this.slimemorre.play()
           slime.sprite.anims.play('slime-some')
           slime.sprite.once('animationcomplete', () => {
             slime.sprite.disableBody(true, true)
           })
         } else {
+          this.hurt.play()
           this.personagemLocal.setTint(0xff0000)
           setTimeout(() => {
             this.physics.world.colliders.add(slime.colisao)
@@ -1490,6 +1518,7 @@ export default class mapa extends Phaser.Scene {
       cristal.objeto = this.physics.add.sprite(cristal.x, cristal.y, 'cristal')
       cristal.objeto.anims.play('cristal-girando')
       cristal.overlap = this.physics.add.overlap(this.personagemLocal, cristal.objeto, () => {
+        this.coletar.play()
         // Desativa o overlap entre personagem e nuvem
         cristal.overlap.destroy()
 
