@@ -5,6 +5,7 @@ export default class mapa extends Phaser.Scene {
     this.teleportCooldown = false // Variável para gerenciar o cooldown do teleporte
     this.aranhasAndam = false
     this.batsAndam = false
+    this.slimesAndam = false
   }
 
   preload () {
@@ -26,8 +27,9 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('portao', './assets/animacoes/portao.png', { frameWidth: 96, frameHeight: 64 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('bat', './assets/inimigos/bat.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('slime', './assets/inimigos/slime.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
-    this.load.spritesheet('bau', './assets/animacoes/bau.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('grade', './assets/animacoes/grade.png', { frameWidth: 32, frameHeight: 64 })
     this.load.spritesheet('pocaorosa', './assets/animacoes/pocaorosa.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('pocaoverde', './assets/animacoes/pocaoverde.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('pocaoazul', './assets/animacoes/pocaoazul.png', { frameWidth: 28, frameHeight: 56 })
@@ -37,12 +39,13 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('buraco', './assets/buraco.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio', './assets/blocovazio.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio2', './assets/blocovazio2.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('blocovazio3', './assets/blocovazio3.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
 
     // Carrega botao de ataque
-    this.load.spritesheet('botao', './assets/simbolos/botao.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('botao', './assets/botao.png', { frameWidth: 48, frameHeight: 48 })
   }
 
   create () {
@@ -844,6 +847,15 @@ export default class mapa extends Phaser.Scene {
     this.layerarbustos = this.tilemapMapa.createLayer('arbustos', [this.tilesetFloresta, this.tilesetMasmorra, this.tilesetMoveisbruxa, this.tilesetTorre])
     this.layerflores = this.tilemapMapa.createLayer('flores', [this.tilesetFloresta])
 
+    this.anims.create({
+      key: 'bloco-quebrando',
+      frames: this.anims.generateFrameNumbers('blocoquebra', {
+        start: 0,
+        end: 7
+      }),
+      frameRate: 8
+    })
+
     if (globalThis.game.jogadores.primeiro === globalThis.game.socket.id) {
       globalThis.game.remoteConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.remoteConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -908,16 +920,102 @@ export default class mapa extends Phaser.Scene {
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menina')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
     }
-    this.anims.create({
-      key: 'bau-brilhando',
-      frames: this.anims.generateFrameNumbers('bau', { start: 0, end: 4 }),
-      frameRate: 10,
-      repeat: -1
+    this.grades = [
+      {
+        indice: 1,
+        x: 912,
+        y: 592
+      },
+      {
+        indice: 2,
+        x: 880,
+        y: 592
+      },
+      {
+        indice: 3,
+        x: 848,
+        y: 592
+      },
+      {
+        indice: 4,
+        x: 816,
+        y: 592
+      },
+      {
+        indice: 5,
+        x: 784,
+        y: 592
+      }
+    ]
+    this.grades.forEach((grade) => {
+      grade.objeto = this.physics.add.sprite(grade.x, grade.y, 'grade')
+      this.physics.add.collider(this.personagemLocal, grade.objeto)
+      this.physics.add.collider(grade.objeto, this.layerparedemsm)
+      this.physics.add.collider(grade.objeto, this.layerarbustos)
     })
-    this.anims.create({
-      key: 'bau-abrindo',
-      frames: this.anims.generateFrameNumbers('bau', { start: 5, end: 12 }),
-      frameRate: 10
+    this.blocosquebra = [
+      {
+        indice: 1,
+        x: 560,
+        y: 1008
+      },
+      {
+        indice: 2,
+        x: 464,
+        y: 816
+      },
+      {
+        indice: 3,
+        x: 336,
+        y: 592
+      },
+      {
+        indice: 4,
+        x: 336,
+        y: 816
+      }
+    ]
+    this.blocosquebra.forEach((blocoquebra) => {
+      blocoquebra.objeto = this.physics.add.sprite(blocoquebra.x, blocoquebra.y, 'blocoquebra')
+      blocoquebra.overlap = this.physics.add.overlap(this.personagemLocal, blocoquebra.objeto, () => {
+        this.physics.world.removeCollider(blocoquebra.overlap)
+        blocoquebra.objeto.anims.play('bloco-quebrando')
+        this.personagemLocal.setTint(0xff0000)
+        setTimeout(() => {
+          this.physics.world.colliders.add(blocoquebra.overlap)
+          this.personagemLocal.setTint(0xffffff)
+        }, 1500)
+        this.vida.setFrame(this.vida.frame.name + 1)
+      }, null, this)
+    })
+    this.buracos = [
+      {
+        indice: 1,
+        x: 4048,
+        y: 1104
+      },
+      {
+        indice: 2,
+        x: 3315,
+        y: 1104
+      },
+      {
+        indice: 3,
+        x: 1953,
+        y: 1104
+      }
+    ]
+    this.buracos.forEach((buraco) => {
+      buraco.objeto = this.physics.add.sprite(buraco.x, buraco.y, 'buraco')
+      buraco.overlap = this.physics.add.overlap(this.personagemLocal, buraco.objeto, () => {
+        this.physics.world.removeCollider(buraco.overlap)
+        this.personagemLocal.setTint(0xff0000)
+        setTimeout(() => {
+          this.physics.world.colliders.add(buraco.overlap)
+          this.personagemLocal.setTint(0xffffff)
+        }, 1500)
+        this.vida.setFrame(this.vida.frame.name + 1)
+      }, null, this)
     })
     this.anims.create({
       key: 'pocaorosa-brilhando',
@@ -937,20 +1035,21 @@ export default class mapa extends Phaser.Scene {
       repeat: -1
     })
     this.anims.create({
+      key: 'pocaoazul-brilhando',
+      frames: this.anims.generateFrameNumbers('pocaoazul', { start: 0, end: 5 }),
+      frameRate: 10,
+      repeat: -1
+    })
+    this.anims.create({
       key: 'pocaoverde-coletado',
       frames: this.anims.generateFrameNumbers('pocaoverde', { start: 6, end: 9 }),
       frameRate: 10
     })
-    this.buraco = this.physics.add.sprite(4048, 1104, 'buraco')
-    this.buracoOverlap = this.physics.add.overlap(this.personagemLocal, this.buraco, () => {
-      this.physics.world.removeCollider(this.buracoOverlap)
-      this.personagemLocal.setTint(0xff0000)
-      setTimeout(() => {
-        this.physics.world.collider.add(this.buracoOverlap)
-        this.personagemLocal.setTint(0xffffff)
-      }, 2000)
-      this.vida.setFrame(this.vida.frame.name + 1)
-    }, null, this)
+    this.anims.create({
+      key: 'pocaoazul-coletado',
+      frames: this.anims.generateFrameNumbers('pocaoazul', { start: 6, end: 9 }),
+      frameRate: 10
+    })
 
     this.pocaorosa = this.physics.add.sprite(2865, 816, 'pocaorosa')
     this.pocaorosa.anims.play('pocaorosa-brilhando')
@@ -959,7 +1058,7 @@ export default class mapa extends Phaser.Scene {
       this.pocaorosa.overlap.destroy()
 
       // Anima a nuvem
-      this.pocaorosa.anims.play('cristal-coletado')
+      this.pocaorosa.anims.play('pocaorosa-coletado')
 
       // Assim que a animação terminar...
       this.pocaorosa.once('animationcomplete', () => {
@@ -975,7 +1074,7 @@ export default class mapa extends Phaser.Scene {
       this.pocaoverde.overlap.destroy()
 
       // Anima a nuvem
-      this.pocaoverde.anims.play('cristal-coletado')
+      this.pocaoverde.anims.play('pocaoverde-coletado')
 
       // Assim que a animação terminar...
       this.pocaoverde.once('animationcomplete', () => {
@@ -983,8 +1082,23 @@ export default class mapa extends Phaser.Scene {
         this.pocaoverde.disableBody(true, true)
       })
     }, null, this)
+    this.pocaoazul = this.physics.add.sprite(3440, 284, 'pocaoazul')
+    this.pocaoazul.anims.play('pocaoazul-brilhando')
+    this.pocaoazul.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaoazul, () => {
+      // Desativa o overlap entre personagem e nuvem
+      this.pocaoazul.overlap.destroy()
 
-    this.portao = this.physics.add.sprite(560, 304, 'portao')
+      // Anima a nuvem
+      this.pocaoazul.anims.play('pocaoazul-coletado')
+
+      // Assim que a animação terminar...
+      this.pocaoazul.once('animationcomplete', () => {
+        // Desativa a nuvem (imagem e colisão)
+        this.pocaoazul.disableBody(true, true)
+      })
+    }, null, this)
+
+    this.portao = this.physics.add.sprite(560, 320, 'portao')
     this.blocovazio = this.physics.add.sprite(2320, 747, 'blocovazio')
     this.physics.add.overlap(this.personagemLocal, this.blocovazio, () => {
       globalThis.game.dadosJogo.send(JSON.stringify({ aranhasAndam: true }))
@@ -995,8 +1109,35 @@ export default class mapa extends Phaser.Scene {
       globalThis.game.dadosJogo.send(JSON.stringify({ batsAndam: true }))
       this.batsAndam = true
     }, null, this)
+    this.blocovazio3 = this.physics.add.sprite(574, 1300, 'blocovazio3')
+    this.physics.add.overlap(this.personagemLocal, this.blocovazio3, () => {
+      globalThis.game.dadosJogo.send(JSON.stringify({ slimesAndam: true }))
+      this.slimesAndam = true
+    }, null, this)
+
+    this.anims.create({
+      key: 'grade-descendo',
+      frames: this.anims.generateFrameNumbers('grade', { start: 0, end: 7 }),
+      frameRate: 8
+    })
+    this.anims.create({
+      key: 'portao-abrindo',
+      frames: this.anims.generateFrameNumbers('portao', { start: 0, end: 10 }),
+      frameRate: 10
+    })
 
     // Movimentos du zinimigo
+    this.anims.create({
+      key: 'slime-andando',
+      frames: this.anims.generateFrameNumbers('slime', { start: 0, end: 5 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'slime-some',
+      frames: this.anims.generateFrameNumbers('slime', { start: 6, end: 13 }),
+      frameRate: 9
+    })
     this.anims.create({
       key: 'bat-esquerda',
       frames: this.anims.generateFrameNumbers('bat', { start: 0, end: 4 }),
@@ -1108,6 +1249,53 @@ export default class mapa extends Phaser.Scene {
           this.personagemLocal.setTint(0xff0000)
           setTimeout(() => {
             this.physics.world.colliders.add(bat.colisao)
+            this.personagemLocal.setTint(0xffffff)
+          }, 1000)
+
+          this.vida.setFrame(this.vida.frame.name + 1)
+        }
+      }, null, this)
+    })
+    this.slimes = [
+      {
+        x: 766,
+        y: 1331
+      },
+      {
+        x: 672,
+        y: 1367
+      },
+      {
+        x: 444,
+        y: 1314
+      },
+      {
+        x: 656,
+        y: 1097
+      },
+      {
+        x: 354,
+        y: 938
+      }
+    ]
+    this.slimes.forEach((slime) => {
+      slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
+      slime.sprite.anims.play('slime-andando')
+      this.physics.add.collider(slime.sprite, this.layerparedemsm)
+      this.physics.add.collider(slime.sprite, this.layerarbustos)
+
+      slime.colisao = this.physics.add.overlap(slime.sprite, this.personagemLocal, () => {
+        this.physics.world.removeCollider(slime.colisao)
+
+        if (this.personagemLocal.texture.key.match(/ataque/)) {
+          slime.sprite.anims.play('slime-some')
+          slime.sprite.once('animationcomplete', () => {
+            slime.sprite.disableBody(true, true)
+          })
+        } else {
+          this.personagemLocal.setTint(0xff0000)
+          setTimeout(() => {
+            this.physics.world.colliders.add(slime.colisao)
             this.personagemLocal.setTint(0xffffff)
           }, 1000)
 
@@ -1436,6 +1624,9 @@ export default class mapa extends Phaser.Scene {
       if (dados.batsAndam) {
         this.batsAndam = true
       }
+      if (dados.slimesAndam) {
+        this.slimesAndam = true
+      }
 
       if (dados.gameover) {
         this.scene.stop('mapa')
@@ -1468,6 +1659,13 @@ export default class mapa extends Phaser.Scene {
         this.bats.forEach((bat, i) => {
           if (!dados.bats[i].visible) {
             bat.sprite.disableBody(true, true)
+          }
+        })
+      }
+      if (dados.slimes) {
+        this.slimes.forEach((slime, i) => {
+          if (!dados.slimes[i].visible) {
+            slime.sprite.disableBody(true, true)
           }
         })
       }
@@ -1509,6 +1707,13 @@ export default class mapa extends Phaser.Scene {
               bats: this.bats.map(bat => (bat => ({
                 visible: bat.sprite.visible
               }))(bat))
+            }))
+          }
+          if (this.slimes) {
+            globalThis.game.dadosJogo.send(JSON.stringify({
+              slimes: this.slimes.map(slime => (slime => ({
+                visible: slime.sprite.visible
+              }))(slime))
             }))
           }
         }
@@ -1596,6 +1801,47 @@ export default class mapa extends Phaser.Scene {
           bat.sprite.setVelocityY(40)
         } else if (diffY <= 10) {
           bat.sprite.setVelocityY(-40)
+        }
+      })
+    }
+    if (this.slimes && this.slimesAndam) {
+      this.slimes.forEach((slime) => {
+        // slime segue personagem mais próximo
+        const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
+          this.personagemLocal.x,
+          slime.sprite.x,
+          this.personagemLocal.y,
+          slime.sprite.y
+        )
+
+        const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
+          this.personagemRemoto.x,
+          slime.sprite.x,
+          this.personagemRemoto.y,
+          slime.sprite.y
+        )
+
+        // Por padrão, o primeiro jogador é o alvo
+        let alvo = this.personagemLocal
+        if (hipotenusaPersonagemLocal > hipotenusaPersonagemRemoto) {
+          // Jogador 2 é perseguido pelo slime
+          alvo = this.personagemRemoto
+        }
+
+        // Sentido no eixo X
+        const diffX = alvo.x - slime.sprite.x
+        if (diffX >= 10) {
+          slime.sprite.setVelocityX(40)
+        } else if (diffX <= 10) {
+          slime.sprite.setVelocityX(-40)
+        }
+
+        // Sentido no eixo Y
+        const diffY = alvo.y - slime.sprite.y
+        if (diffY >= 10) {
+          slime.sprite.setVelocityY(40)
+        } else if (diffY <= 10) {
+          slime.sprite.setVelocityY(-40)
         }
       })
     }

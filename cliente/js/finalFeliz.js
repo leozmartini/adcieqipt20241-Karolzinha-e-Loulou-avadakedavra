@@ -4,11 +4,11 @@ export default class finalFeliz extends Phaser.Scene {
   }
 
   preload () {
-    this.load.image('finalFeliz', './assets/finalFeliz.png')
+    this.load.image('fundo', './assets/fundo.png')
   }
 
   create () {
-    this.add.image(400, 225, 'finalFeliz')
+    this.add.image(400, 225, 'fundo')
     // Adiciona o texto de parabéns e a possibilidade de reiniciar o jogo
     this.mensagem = this.add.text(100, 225, 'Parabéns! Você conseguiu!', {
       fontSize: '32px',
