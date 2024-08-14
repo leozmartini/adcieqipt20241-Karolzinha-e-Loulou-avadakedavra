@@ -1756,15 +1756,15 @@ export default class mapa extends Phaser.Scene {
         // aranha segue personagem mais próximo
         const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
           this.personagemLocal.x,
-          aranha.sprite.x,
           this.personagemLocal.y,
+          aranha.sprite.x,
           aranha.sprite.y
         )
 
         const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
           this.personagemRemoto.x,
-          aranha.sprite.x,
           this.personagemRemoto.y,
+          aranha.sprite.x,
           aranha.sprite.y
         )
 
@@ -1792,20 +1792,21 @@ export default class mapa extends Phaser.Scene {
         }
       })
     }
+    
     if (this.bats && this.batsAndam) {
       this.bats.forEach((bat) => {
         // bat segue personagem mais próximo
         const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
           this.personagemLocal.x,
-          bat.sprite.x,
           this.personagemLocal.y,
+          bat.sprite.x,
           bat.sprite.y
         )
 
         const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
           this.personagemRemoto.x,
-          bat.sprite.x,
           this.personagemRemoto.y,
+          bat.sprite.x,
           bat.sprite.y
         )
 
@@ -1833,20 +1834,21 @@ export default class mapa extends Phaser.Scene {
         }
       })
     }
+    
     if (this.slimes && this.slimesAndam) {
       this.slimes.forEach((slime) => {
         // slime segue personagem mais próximo
         const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
           this.personagemLocal.x,
-          slime.sprite.x,
           this.personagemLocal.y,
+          slime.sprite.x,
           slime.sprite.y
         )
 
         const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
           this.personagemRemoto.x,
-          slime.sprite.x,
           this.personagemRemoto.y,
+          slime.sprite.x,
           slime.sprite.y
         )
 
@@ -1901,8 +1903,8 @@ export default class mapa extends Phaser.Scene {
 
       this.personagemLocal.setVelocity(velocityX, velocityY)
 
-      console.log('x: ', this.personagemLocal.x)
-      console.log('y: ', this.personagemLocal.y)
+      // console.log('x: ', this.personagemLocal.x)
+      // console.log('y: ', this.personagemLocal.y)
 
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
