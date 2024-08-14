@@ -38,6 +38,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('slime', './assets/inimigos/slime.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('grade', './assets/animacoes/grade.png', { frameWidth: 32, frameHeight: 64 })
+    this.load.spritesheet('botaograde', './assets/animacoes/botaograde.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('pocaorosa', './assets/animacoes/pocaorosa.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('pocaoverde', './assets/animacoes/pocaoverde.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('pocaoazul', './assets/animacoes/pocaoazul.png', { frameWidth: 28, frameHeight: 56 })
@@ -81,6 +82,22 @@ export default class mapa extends Phaser.Scene {
     this.layerchaofaltando = this.tilemapMapa.createLayer('chaofaltando', [this.tilesetFloresta])
     // Animações agua
     this.anims.create({
+      key: 'botaograde-pressio',
+      frames: this.anims.generateFrameNumbers('botaograde', {
+        start: 0,
+        end: 1
+      }),
+      frameRate: 8
+    })
+    this.anims.create({
+      key: 'grade-desce',
+      frames: this.anims.generateFrameNumbers('grade', {
+        start: 0,
+        end: 7
+      }),
+      frameRate: 4
+    })
+    this.anims.create({
       key: 'agua-anim',
       frames: this.anims.generateFrameNumbers('agua', {
         start: 0,
@@ -101,757 +118,161 @@ export default class mapa extends Phaser.Scene {
 
     // riozinho
     this.rio = [
-      {
-        indice: 1,
-        x: 2352,
-        y: 976
-      },
-      {
-        indice: 2,
-        x: 2320,
-        y: 976
-      },
-      {
-        indice: 3,
-        x: 2288,
-        y: 976
-      },
-      {
-        indice: 4,
-        x: 2256,
-        y: 976
-      },
-      {
-        indice: 5,
-        x: 2224,
-        y: 976
-      },
-      {
-        indice: 6,
-        x: 2192,
-        y: 976
-      },
-      {
-        indice: 7,
-        x: 2160,
-        y: 976
-      },
-      {
-        indice: 8,
-        x: 2128,
-        y: 976
-      },
-      {
-        indice: 9,
-        x: 2096,
-        y: 976
-      },
-      {
-        indice: 10,
-        x: 2064,
-        y: 976
-      },
-      {
-        indice: 11,
-        x: 2032,
-        y: 976
-      },
-      {
-        indice: 12,
-        x: 2000,
-        y: 976
-      },
-      {
-        indice: 13,
-        x: 1968,
-        y: 976
-      },
-      {
-        indice: 14,
-        x: 1936,
-        y: 976
-      },
-      {
-        indice: 15,
-        x: 1904,
-        y: 976
-      },
-      {
-        indice: 16,
-        x: 1872,
-        y: 976
-      },
-      {
-        indice: 17,
-        x: 1840,
-        y: 976
-      },
-      {
-        indice: 18,
-        x: 1808,
-        y: 976
-      },
-      {
-        indice: 19,
-        x: 1776,
-        y: 976
-      },
-      {
-        indice: 20,
-        x: 2384,
-        y: 976
-      },
-      {
-        indice: 21,
-        x: 2416,
-        y: 976
-      },
-      {
-        indice: 22,
-        x: 2448,
-        y: 976
-      },
-      {
-        indice: 23,
-        x: 2480,
-        y: 976
-      },
-      {
-        indice: 24,
-        x: 2512,
-        y: 976
-      },
-      {
-        indice: 25,
-        x: 2544,
-        y: 976
-      },
-      {
-        indice: 26,
-        x: 2576,
-        y: 976
-      },
-      {
-        indice: 27,
-        x: 2608,
-        y: 976
-      },
-      {
-        indice: 28,
-        x: 2640,
-        y: 976
-      },
-      {
-        indice: 29,
-        x: 2672,
-        y: 976
-      },
-      {
-        indice: 30,
-        x: 2704,
-        y: 976
-      },
-      {
-        indice: 31,
-        x: 2352,
-        y: 1008
-      },
-      {
-        indice: 32,
-        x: 2320,
-        y: 1008
-      },
-      {
-        indice: 33,
-        x: 2288,
-        y: 1008
-      },
-      {
-        indice: 34,
-        x: 2256,
-        y: 1008
-      },
-      {
-        indice: 35,
-        x: 2224,
-        y: 1008
-      },
-      {
-        indice: 36,
-        x: 2192,
-        y: 1008
-      },
-      {
-        indice: 37,
-        x: 2160,
-        y: 1008
-      },
-      {
-        indice: 38,
-        x: 2128,
-        y: 1008
-      },
-      {
-        indice: 39,
-        x: 2096,
-        y: 1008
-      },
-      {
-        indice: 40,
-        x: 2064,
-        y: 1008
-      },
-      {
-        indice: 41,
-        x: 2032,
-        y: 1008
-      },
-      {
-        indice: 42,
-        x: 2000,
-        y: 1008
-      },
-      {
-        indice: 43,
-        x: 1968,
-        y: 1008
-      },
-      {
-        indice: 44,
-        x: 1936,
-        y: 1008
-      },
-      {
-        indice: 45,
-        x: 1904,
-        y: 1008
-      },
-      {
-        indice: 46,
-        x: 1872,
-        y: 1008
-      },
-      {
-        indice: 47,
-        x: 1840,
-        y: 1008
-      },
-      {
-        indice: 48,
-        x: 1808,
-        y: 1008
-      },
-      {
-        indice: 49,
-        x: 1776,
-        y: 1008
-      },
-      {
-        indice: 50,
-        x: 2384,
-        y: 1008
-      },
-      {
-        indice: 51,
-        x: 2416,
-        y: 1008
-      },
-      {
-        indice: 52,
-        x: 2448,
-        y: 1008
-      },
-      {
-        indice: 53,
-        x: 2480,
-        y: 1008
-      },
-      {
-        indice: 54,
-        x: 2512,
-        y: 1008
-      },
-      {
-        indice: 55,
-        x: 2544,
-        y: 1008
-      },
-      {
-        indice: 56,
-        x: 2576,
-        y: 1008
-      },
-      {
-        indice: 57,
-        x: 2608,
-        y: 1008
-      },
-      {
-        indice: 58,
-        x: 2640,
-        y: 1008
-      },
-      {
-        indice: 59,
-        x: 2672,
-        y: 1008
-      },
-      {
-        indice: 60,
-        x: 2704,
-        y: 1008
-      },
-      {
-        indice: 61,
-        x: 3536,
-        y: 400
-      },
-      {
-        indice: 62,
-        x: 3504,
-        y: 400
-      },
-      {
-        indice: 63,
-        x: 3472,
-        y: 400
-      },
-      {
-        indice: 64,
-        x: 3440,
-        y: 400
-      },
-      {
-        indice: 65,
-        x: 3408,
-        y: 400
-      },
-      {
-        indice: 66,
-        x: 3376,
-        y: 400
-      },
-      {
-        indice: 67,
-        x: 3344,
-        y: 400
-      },
-      {
-        indice: 68,
-        x: 3536,
-        y: 368
-      },
-      {
-        indice: 69,
-        x: 3504,
-        y: 368
-      },
-      {
-        indice: 70,
-        x: 3472,
-        y: 368
-      },
-      {
-        indice: 71,
-        x: 3440,
-        y: 368
-      },
-      {
-        indice: 72,
-        x: 3408,
-        y: 368
-      },
-      {
-        indice: 73,
-        x: 3376,
-        y: 368
-      },
-      {
-        indice: 74,
-        x: 3344,
-        y: 368
-      },
-      {
-        indice: 75,
-        x: 3312,
-        y: 368
-      },
-      {
-        indice: 76,
-        x: 3280,
-        y: 368
-      },
-      {
-        indice: 77,
-        x: 3536,
-        y: 336
-      },
-      {
-        indice: 78,
-        x: 3504,
-        y: 336
-      },
-      {
-        indice: 79,
-        x: 3472,
-        y: 336
-      },
-      {
-        indice: 81,
-        x: 3408,
-        y: 336
-      },
-      {
-        indice: 82,
-        x: 3376,
-        y: 336
-      },
-      {
-        indice: 83,
-        x: 3344,
-        y: 336
-      },
-      {
-        indice: 84,
-        x: 3312,
-        y: 336
-      },
-      {
-        indice: 85,
-        x: 3280,
-        y: 336
-      },
-      {
-        indice: 86,
-        x: 3536,
-        y: 304
-      },
-      {
-        indice: 87,
-        x: 3504,
-        y: 304
-      },
-      {
-        indice: 88,
-        x: 3472,
-        y: 304
-      },
-      {
-        indice: 90,
-        x: 3408,
-        y: 304
-      },
-      {
-        indice: 91,
-        x: 3376,
-        y: 304
-      },
-      {
-        indice: 92,
-        x: 3344,
-        y: 304
-      },
-      {
-        indice: 93,
-        x: 3312,
-        y: 304
-      },
-      {
-        indice: 94,
-        x: 3280,
-        y: 304
-      },
-      {
-        indice: 95,
-        x: 3536,
-        y: 272
-      },
-      {
-        indice: 96,
-        x: 3504,
-        y: 272
-      },
-      {
-        indice: 97,
-        x: 3472,
-        y: 272
-      },
-      {
-        indice: 98,
-        x: 3440,
-        y: 272
-      },
-      {
-        indice: 99,
-        x: 3408,
-        y: 272
-      },
-      {
-        indice: 100,
-        x: 3376,
-        y: 272
-      },
-      {
-        indice: 101,
-        x: 3344,
-        y: 272
-      },
-      {
-        indice: 102,
-        x: 3312,
-        y: 272
-      },
-      {
-        indice: 103,
-        x: 3280,
-        y: 272
-      },
-      {
-        indice: 80,
-        x: 3408,
-        y: 240
-      },
-      {
-        indice: 89,
-        x: 3376,
-        y: 240
-      },
-      {
-        indice: 104,
-        x: 3344,
-        y: 240
-      },
-      {
-        indice: 105,
-        x: 3312,
-        y: 240
-      },
-      {
-        indice: 106,
-        x: 3280,
-        y: 240
-      },
-      {
-        indice: 107,
-        x: 3408,
-        y: 208
-      },
-      {
-        indice: 108,
-        x: 3376,
-        y: 208
-      },
-      {
-        indice: 109,
-        x: 3344,
-        y: 208
-      },
-      {
-        indice: 110,
-        x: 3312,
-        y: 208
-      }
+      { indice: 1, x: 2352, y: 976 },
+      { indice: 2, x: 2320, y: 976 },
+      { indice: 3, x: 2288, y: 976 },
+      { indice: 4, x: 2256, y: 976 },
+      { indice: 5, x: 2224, y: 976 },
+      { indice: 6, x: 2192, y: 976 },
+      { indice: 7, x: 2160, y: 976 },
+      { indice: 8, x: 2128, y: 976 },
+      { indice: 9, x: 2096, y: 976 },
+      { indice: 10, x: 2064, y: 976 },
+      { indice: 11, x: 2032, y: 976 },
+      { indice: 12, x: 2000, y: 976 },
+      { indice: 13, x: 1968, y: 976 },
+      { indice: 14, x: 1936, y: 976 },
+      { indice: 15, x: 1904, y: 976 },
+      { indice: 16, x: 1872, y: 976 },
+      { indice: 17, x: 1840, y: 976 },
+      { indice: 18, x: 1808, y: 976 },
+      { indice: 19, x: 1776, y: 976 },
+      { indice: 20, x: 2384, y: 976 },
+      { indice: 21, x: 2416, y: 976 },
+      { indice: 22, x: 2448, y: 976 },
+      { indice: 23, x: 2480, y: 976 },
+      { indice: 24, x: 2512, y: 976 },
+      { indice: 25, x: 2544, y: 976 },
+      { indice: 26, x: 2576, y: 976 },
+      { indice: 27, x: 2608, y: 976 },
+      { indice: 28, x: 2640, y: 976 },
+      { indice: 29, x: 2672, y: 976 },
+      { indice: 30, x: 2704, y: 976 },
+      { indice: 31, x: 2352, y: 1008 },
+      { indice: 32, x: 2320, y: 1008 },
+      { indice: 33, x: 2288, y: 1008 },
+      { indice: 34, x: 2256, y: 1008 },
+      { indice: 35, x: 2224, y: 1008 },
+      { indice: 36, x: 2192, y: 1008 },
+      { indice: 37, x: 2160, y: 1008 },
+      { indice: 38, x: 2128, y: 1008 },
+      { indice: 39, x: 2096, y: 1008 },
+      { indice: 40, x: 2064, y: 1008 },
+      { indice: 41, x: 2032, y: 1008 },
+      { indice: 42, x: 2000, y: 1008 },
+      { indice: 43, x: 1968, y: 1008 },
+      { indice: 44, x: 1936, y: 1008 },
+      { indice: 45, x: 1904, y: 1008 },
+      { indice: 46, x: 1872, y: 1008 },
+      { indice: 47, x: 1840, y: 1008 },
+      { indice: 48, x: 1808, y: 1008 },
+      { indice: 49, x: 1776, y: 1008 },
+      { indice: 50, x: 2384, y: 1008 },
+      { indice: 51, x: 2416, y: 1008 },
+      { indice: 52, x: 2448, y: 1008 },
+      { indice: 53, x: 2480, y: 1008 },
+      { indice: 54, x: 2512, y: 1008 },
+      { indice: 55, x: 2544, y: 1008 },
+      { indice: 56, x: 2576, y: 1008 },
+      { indice: 57, x: 2608, y: 1008 },
+      { indice: 58, x: 2640, y: 1008 },
+      { indice: 59, x: 2672, y: 1008 },
+      { indice: 60, x: 2704, y: 1008 },
+      { indice: 61, x: 3536, y: 400 },
+      { indice: 62, x: 3504, y: 400 },
+      { indice: 63, x: 3472, y: 400 },
+      { indice: 64, x: 3440, y: 400 },
+      { indice: 65, x: 3408, y: 400 },
+      { indice: 66, x: 3376, y: 400 },
+      { indice: 67, x: 3344, y: 400 },
+      { indice: 68, x: 3536, y: 368 },
+      { indice: 69, x: 3504, y: 368 },
+      { indice: 70, x: 3472, y: 368 },
+      { indice: 71, x: 3440, y: 368 },
+      { indice: 72, x: 3408, y: 368 },
+      { indice: 73, x: 3376, y: 368 },
+      { indice: 74, x: 3344, y: 368 },
+      { indice: 75, x: 3312, y: 368 },
+      { indice: 76, x: 3280, y: 368 },
+      { indice: 77, x: 3536, y: 336 },
+      { indice: 78, x: 3504, y: 336 },
+      { indice: 79, x: 3472, y: 336 },
+      { indice: 80, x: 3408, y: 240 },
+      { indice: 81, x: 3408, y: 336 },
+      { indice: 82, x: 3376, y: 336 },
+      { indice: 83, x: 3344, y: 336 },
+      { indice: 84, x: 3312, y: 336 },
+      { indice: 85, x: 3280, y: 336 },
+      { indice: 86, x: 3536, y: 304 },
+      { indice: 87, x: 3504, y: 304 },
+      { indice: 88, x: 3472, y: 304 },
+      { indice: 89, x: 3376, y: 240 },
+      { indice: 90, x: 3408, y: 304 },
+      { indice: 91, x: 3376, y: 304 },
+      { indice: 92, x: 3344, y: 304 },
+      { indice: 93, x: 3312, y: 304 },
+      { indice: 94, x: 3280, y: 304 },
+      { indice: 95, x: 3536, y: 272 },
+      { indice: 96, x: 3504, y: 272 },
+      { indice: 97, x: 3472, y: 272 },
+      { indice: 98, x: 3440, y: 272 },
+      { indice: 99, x: 3408, y: 272 },
+      { indice: 100, x: 3376, y: 272 },
+      { indice: 101, x: 3344, y: 272 },
+      { indice: 102, x: 3312, y: 272 },
+      { indice: 103, x: 3280, y: 272 },
+      { indice: 104, x: 3344, y: 240 },
+      { indice: 105, x: 3312, y: 240 },
+      { indice: 106, x: 3280, y: 240 },
+      { indice: 107, x: 3408, y: 208 },
+      { indice: 108, x: 3376, y: 208 },
+      { indice: 109, x: 3344, y: 208 },
+      { indice: 110, x: 3312, y: 208 }
     ]
     this.rio.forEach((agua) => {
       agua.objeto = this.physics.add.sprite(agua.x, agua.y, 'aguaborda')
       agua.objeto.anims.play('agua-anim')
     })
     this.rioborda = [
-      {
-        indice: 1,
-        x: 2352,
-        y: 944
-      },
-      {
-        indice: 2,
-        x: 2320,
-        y: 944
-      },
-      {
-        indice: 3,
-        x: 2288,
-        y: 944
-      },
-      {
-        indice: 4,
-        x: 2256,
-        y: 944
-      },
-      {
-        indice: 5,
-        x: 2224,
-        y: 944
-      },
-      {
-        indice: 6,
-        x: 2192,
-        y: 944
-      },
-      {
-        indice: 7,
-        x: 2160,
-        y: 944
-      },
-      {
-        indice: 8,
-        x: 2128,
-        y: 944
-      },
-      {
-        indice: 9,
-        x: 2096,
-        y: 944
-      },
-      {
-        indice: 10,
-        x: 2064,
-        y: 944
-      },
-      {
-        indice: 11,
-        x: 2032,
-        y: 944
-      },
-      {
-        indice: 12,
-        x: 2000,
-        y: 944
-      },
-      {
-        indice: 13,
-        x: 1968,
-        y: 944
-      },
-      {
-        indice: 14,
-        x: 1936,
-        y: 944
-      },
-      {
-        indice: 15,
-        x: 1904,
-        y: 944
-      },
-      {
-        indice: 16,
-        x: 1872,
-        y: 944
-      },
-      {
-        indice: 17,
-        x: 1840,
-        y: 944
-      },
-      {
-        indice: 18,
-        x: 1808,
-        y: 944
-      },
-      {
-        indice: 19,
-        x: 1776,
-        y: 944
-      },
-      {
-        indice: 20,
-        x: 2384,
-        y: 944
-      },
-      {
-        indice: 21,
-        x: 2416,
-        y: 944
-      },
-      {
-        indice: 22,
-        x: 2448,
-        y: 944
-      },
-      {
-        indice: 23,
-        x: 2480,
-        y: 944
-      },
-      {
-        indice: 24,
-        x: 2512,
-        y: 944
-      },
-      {
-        indice: 25,
-        x: 2544,
-        y: 944
-      },
-      {
-        indice: 26,
-        x: 2576,
-        y: 944
-      },
-      {
-        indice: 27,
-        x: 2608,
-        y: 944
-      },
-      {
-        indice: 28,
-        x: 2640,
-        y: 944
-      },
-      {
-        indice: 29,
-        x: 2672,
-        y: 944
-      },
-      {
-        indice: 30,
-        x: 2704,
-        y: 944
-      },
-      {
-        indice: 31,
-        x: 3536,
-        y: 240
-      },
-      {
-        indice: 32,
-        x: 3504,
-        y: 240
-      },
-      {
-        indice: 33,
-        x: 3472,
-        y: 240
-      },
-      {
-        indice: 34,
-        x: 3440,
-        y: 240
-      },
-      {
-        indice: 35,
-        x: 3408,
-        y: 176
-      },
-      {
-        indice: 36,
-        x: 3376,
-        y: 176
-      },
-      {
-        indice: 37,
-        x: 3344,
-        y: 176
-      },
-      {
-        indice: 38,
-        x: 3312,
-        y: 176
-      },
-      {
-        indice: 38,
-        x: 3280,
-        y: 208
-      }
+      { indice: 1, x: 2352, y: 944 },
+      { indice: 2, x: 2320, y: 944 },
+      { indice: 3, x: 2288, y: 944 },
+      { indice: 4, x: 2256, y: 944 },
+      { indice: 5, x: 2224, y: 944 },
+      { indice: 6, x: 2192, y: 944 },
+      { indice: 7, x: 2160, y: 944 },
+      { indice: 8, x: 2128, y: 944 },
+      { indice: 9, x: 2096, y: 944 },
+      { indice: 10, x: 2064, y: 944 },
+      { indice: 11, x: 2032, y: 944 },
+      { indice: 12, x: 2000, y: 944 },
+      { indice: 13, x: 1968, y: 944 },
+      { indice: 14, x: 1936, y: 944 },
+      { indice: 15, x: 1904, y: 944 },
+      { indice: 16, x: 1872, y: 944 },
+      { indice: 17, x: 1840, y: 944 },
+      { indice: 18, x: 1808, y: 944 },
+      { indice: 19, x: 1776, y: 944 },
+      { indice: 20, x: 2384, y: 944 },
+      { indice: 21, x: 2416, y: 944 },
+      { indice: 22, x: 2448, y: 944 },
+      { indice: 23, x: 2480, y: 944 },
+      { indice: 24, x: 2512, y: 944 },
+      { indice: 25, x: 2544, y: 944 },
+      { indice: 26, x: 2576, y: 944 },
+      { indice: 27, x: 2608, y: 944 },
+      { indice: 28, x: 2640, y: 944 },
+      { indice: 29, x: 2672, y: 944 },
+      { indice: 30, x: 2704, y: 944 },
+      { indice: 31, x: 3536, y: 240 },
+      { indice: 32, x: 3504, y: 240 },
+      { indice: 33, x: 3472, y: 240 },
+      { indice: 34, x: 3440, y: 240 },
+      { indice: 35, x: 3408, y: 176 },
+      { indice: 36, x: 3376, y: 176 },
+      { indice: 37, x: 3344, y: 176 },
+      { indice: 38, x: 3312, y: 176 },
+      { indice: 39, x: 3280, y: 208 }
     ]
     this.rioborda.forEach((aguaborda) => {
       aguaborda.objeto = this.physics.add.sprite(aguaborda.x, aguaborda.y, 'aguaborda')
@@ -867,10 +288,38 @@ export default class mapa extends Phaser.Scene {
       key: 'bloco-quebrando',
       frames: this.anims.generateFrameNumbers('blocoquebra', {
         start: 0,
-        end: 7
+        end: 8
       }),
       frameRate: 8
     })
+    this.blocosquebra = [
+      { indice: 1, x: 560, y: 1008 },
+      { indice: 2, x: 368, y: 848 },
+      { indice: 3, x: 368, y: 656 }
+    ]
+    this.blocosquebra.forEach((blocoquebra) => {
+      blocoquebra.objeto = this.physics.add.sprite(blocoquebra.x, blocoquebra.y, 'blocoquebra')
+    })
+    this.buracos = [
+      { indice: 1, x: 4048, y: 110 },
+      { indice: 2, x: 3315, y: 11 },
+      { indice: 3, x: 1953, y: 1104 }
+    ]
+    this.buracos.forEach((buraco) => {
+      buraco.objeto = this.physics.add.sprite(buraco.x, buraco.y, 'buraco')
+    })
+    this.grades = [
+      { indice: 1, x: 912, y: 592 },
+      { indice: 2, x: 880, y: 592 },
+      { indice: 3, x: 848, y: 592 },
+      { indice: 4, x: 816, y: 592 },
+      { indice: 5, x: 784, y: 592 }
+    ]
+    this.grades.forEach((grade) => {
+      grade.objeto = this.physics.add.sprite(grade.x, grade.y, 'grade')
+      grade.objeto.setImmovable(true)
+    })
+    this.botaograde = this.physics.add.sprite(496, 816, 'botaograde')
 
     if (globalThis.game.jogadores.primeiro === globalThis.game.socket.id) {
       globalThis.game.remoteConnection = new RTCPeerConnection(globalThis.game.iceServers)
@@ -936,63 +385,27 @@ export default class mapa extends Phaser.Scene {
       this.personagemLocal = this.physics.add.sprite(2285, 410, 'menina')
       this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
     }
-    this.grades = [
-      {
-        indice: 1,
-        x: 912,
-        y: 592
-      },
-      {
-        indice: 2,
-        x: 880,
-        y: 592
-      },
-      {
-        indice: 3,
-        x: 848,
-        y: 592
-      },
-      {
-        indice: 4,
-        x: 816,
-        y: 592
-      },
-      {
-        indice: 5,
-        x: 784,
-        y: 592
-      }
-    ]
+
     this.grades.forEach((grade) => {
-      grade.objeto = this.physics.add.sprite(grade.x, grade.y, 'grade')
       this.physics.add.collider(this.personagemLocal, grade.objeto)
-      this.physics.add.collider(grade.objeto, this.layerparedemsm)
-      this.physics.add.collider(grade.objeto, this.layerarbustos)
     })
-    this.blocosquebra = [
-      {
-        indice: 1,
-        x: 560,
-        y: 1008
-      },
-      {
-        indice: 2,
-        x: 464,
-        y: 816
-      },
-      {
-        indice: 3,
-        x: 336,
-        y: 592
-      },
-      {
-        indice: 4,
-        x: 336,
-        y: 816
-      }
-    ]
+    this.botaograde.colisao = this.physics.add.overlap(this.personagemLocal, this.botaograde, () => {
+      this.physics.world.removeCollider(this.botaograde.colisao)
+      // Animação de pressionar o botão
+      this.botaograde.play('botaograde-pressio')
+
+      // Animação de "descer" para cada grade e remoção da colisão
+      this.grades.forEach((grade) => {
+        grade.objeto.play('grade-desce')
+
+        // Removendo a colisão após a animação iniciar
+        grade.objeto.on('animationcomplete', () => {
+          grade.objeto.disableBody(true, true)
+        })
+      })
+    }, null, this)
+
     this.blocosquebra.forEach((blocoquebra) => {
-      blocoquebra.objeto = this.physics.add.sprite(blocoquebra.x, blocoquebra.y, 'blocoquebra')
       blocoquebra.overlap = this.physics.add.overlap(this.personagemLocal, blocoquebra.objeto, () => {
         this.hurt.play()
         this.physics.world.removeCollider(blocoquebra.overlap)
@@ -1005,25 +418,7 @@ export default class mapa extends Phaser.Scene {
         this.vida.setFrame(this.vida.frame.name + 1)
       }, null, this)
     })
-    this.buracos = [
-      {
-        indice: 1,
-        x: 4048,
-        y: 1104
-      },
-      {
-        indice: 2,
-        x: 3315,
-        y: 1104
-      },
-      {
-        indice: 3,
-        x: 1953,
-        y: 1104
-      }
-    ]
     this.buracos.forEach((buraco) => {
-      buraco.objeto = this.physics.add.sprite(buraco.x, buraco.y, 'buraco')
       buraco.overlap = this.physics.add.overlap(this.personagemLocal, buraco.objeto, () => {
         this.hurt.play()
         this.physics.world.removeCollider(buraco.overlap)
@@ -1084,12 +479,15 @@ export default class mapa extends Phaser.Scene {
         // Desativa a nuvem (imagem e colisão)
         this.pocaorosa.disableBody(true, true)
       })
+      if (this.vida.frame.name >= 0) {
+        this.vida.setFrame(this.vida.frame.name - 1)
+      }
     }, null, this)
 
     this.pocaoverde = this.physics.add.sprite(3440, 284, 'pocaoverde')
     this.pocaoverde.anims.play('pocaoverde-brilhando')
     this.pocaoverde.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaoverde, () => {
-      this.coletar2 = this.sound.add('coletar2')
+      this.coletar2.play()
       // Desativa o overlap entre personagem e nuvem
       this.pocaoverde.overlap.destroy()
 
@@ -1100,12 +498,15 @@ export default class mapa extends Phaser.Scene {
       this.pocaoverde.once('animationcomplete', () => {
         // Desativa a nuvem (imagem e colisão)
         this.pocaoverde.disableBody(true, true)
+        if (this.vida.frame.name >= 0) {
+          this.vida.setFrame(this.vida.frame.name - 1)
+        }
       })
     }, null, this)
     this.pocaoazul = this.physics.add.sprite(3440, 284, 'pocaoazul')
     this.pocaoazul.anims.play('pocaoazul-brilhando')
     this.pocaoazul.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaoazul, () => {
-      this.coletar2 = this.sound.add('coletar2')
+      this.coletar2.play()
       // Desativa o overlap entre personagem e nuvem
       this.pocaoazul.overlap.destroy()
 
@@ -1116,10 +517,13 @@ export default class mapa extends Phaser.Scene {
       this.pocaoazul.once('animationcomplete', () => {
         // Desativa a nuvem (imagem e colisão)
         this.pocaoazul.disableBody(true, true)
+        if (this.vida.frame.name >= 0) {
+          this.vida.setFrame(this.vida.frame.name - 1)
+        }
       })
     }, null, this)
 
-    this.portao = this.physics.add.sprite(560, 320, 'portao')
+    this.portao = this.physics.add.sprite(560, 288, 'portao')
     this.blocovazio = this.physics.add.sprite(2320, 747, 'blocovazio')
     this.physics.add.overlap(this.personagemLocal, this.blocovazio, () => {
       globalThis.game.dadosJogo.send(JSON.stringify({ aranhasAndam: true }))
@@ -1130,7 +534,7 @@ export default class mapa extends Phaser.Scene {
       globalThis.game.dadosJogo.send(JSON.stringify({ batsAndam: true }))
       this.batsAndam = true
     }, null, this)
-    this.blocovazio3 = this.physics.add.sprite(574, 1300, 'blocovazio3')
+    this.blocovazio3 = this.physics.add.sprite(433, 1392, 'blocovazio3')
     this.physics.add.overlap(this.personagemLocal, this.blocovazio3, () => {
       globalThis.game.dadosJogo.send(JSON.stringify({ slimesAndam: true }))
       this.slimesAndam = true
@@ -1192,22 +596,10 @@ export default class mapa extends Phaser.Scene {
 
     // Define o movimento du zinimigo para seguir o personagem
     this.aranhas = [
-      {
-        x: 2039,
-        y: 784
-      },
-      {
-        x: 1978,
-        y: 880
-      },
-      {
-        x: 2619,
-        y: 784
-      },
-      {
-        x: 2640,
-        y: 880
-      }
+      { x: 2039, y: 784 },
+      { x: 1978, y: 880 },
+      { x: 2619, y: 784 },
+      { x: 2640, y: 880 }
     ]
     this.aranhas.forEach((aranha) => {
       aranha.sprite = this.physics.add.sprite(aranha.x, aranha.y, 'aranha')
@@ -1237,22 +629,10 @@ export default class mapa extends Phaser.Scene {
       }, null, this)
     })
     this.bats = [
-      {
-        x: 3003,
-        y: 923
-      },
-      {
-        x: 2959,
-        y: 868
-      },
-      {
-        x: 2803,
-        y: 871
-      },
-      {
-        x: 3031,
-        y: 829
-      }
+      { x: 3003, y: 923 },
+      { x: 2959, y: 868 },
+      { x: 2803, y: 871 },
+      { x: 3031, y: 829 }
     ]
     this.bats.forEach((bat) => {
       bat.sprite = this.physics.add.sprite(bat.x, bat.y, 'bat')
@@ -1282,26 +662,11 @@ export default class mapa extends Phaser.Scene {
       }, null, this)
     })
     this.slimes = [
-      {
-        x: 766,
-        y: 1331
-      },
-      {
-        x: 672,
-        y: 1367
-      },
-      {
-        x: 444,
-        y: 1314
-      },
-      {
-        x: 656,
-        y: 1097
-      },
-      {
-        x: 354,
-        y: 938
-      }
+      { x: 766, y: 1331 },
+      { x: 672, y: 1367 },
+      { x: 444, y: 1314 },
+      { x: 656, y: 1097 },
+      { x: 354, y: 938 }
     ]
     this.slimes.forEach((slime) => {
       slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
@@ -1368,151 +733,35 @@ export default class mapa extends Phaser.Scene {
     })
 
     this.cristais = [
-      {
-        indice: 1,
-        x: 2320,
-        y: 602
-      },
-      {
-        indice: 2,
-        x: 2320,
-        y: 660
-      },
-      {
-        indice: 3,
-        x: 2320,
-        y: 789
-      },
-      {
-        indice: 4,
-        x: 2320,
-        y: 848
-      },
-      {
-        indice: 5,
-        x: 2201,
-        y: 848
-      },
-      {
-        indice: 6,
-        x: 2062,
-        y: 848
-      },
-      {
-        indice: 7,
-        x: 1858,
-        y: 848
-      },
-      {
-        indice: 8,
-        x: 2418,
-        y: 850
-      },
-      {
-        indice: 9,
-        x: 2531,
-        y: 848
-      },
-      {
-        indice: 10,
-        x: 2640,
-        y: 848
-      },
-      {
-        indice: 11,
-        x: 2418,
-        y: 1035
-      },
-      {
-        indice: 12,
-        x: 2204,
-        y: 1104
-      },
-      {
-        indice: 17,
-        x: 2318,
-        y: 1104
-      },
-      {
-        indice: 13,
-        x: 1840,
-        y: 1104
-      },
-      {
-        indice: 14,
-        x: 2045,
-        y: 1104
-      },
-      {
-        indice: 15,
-        x: 2535,
-        y: 1104
-      },
-      {
-        indice: 16,
-        x: 2535,
-        y: 1104
-      },
-      {
-        indice: 18,
-        x: 2702,
-        y: 1136
-      },
-      {
-        indice: 19,
-        x: 2859,
-        y: 1136
-      },
-      {
-        indice: 20,
-        x: 3218,
-        y: 848
-      },
-      {
-        indice: 21,
-        x: 3413,
-        y: 848
-      },
-      {
-        indice: 22,
-        x: 3403,
-        y: 718
-      },
-      {
-        indice: 23,
-        x: 3403,
-        y: 594
-      },
-      {
-        indice: 24,
-        x: 3570,
-        y: 848
-      },
-      {
-        indice: 25,
-        x: 3820,
-        y: 746
-      },
-      {
-        indice: 26,
-        x: 3511,
-        y: 957
-      },
-      {
-        indice: 27,
-        x: 3169,
-        y: 1095
-      },
-      {
-        indice: 27,
-        x: 3512,
-        y: 1085
-      },
-      {
-        indice: 27,
-        x: 3893,
-        y: 1037
-      }
+      { indice: 1, x: 2320, y: 602 },
+      { indice: 2, x: 2320, y: 660 },
+      { indice: 3, x: 2320, y: 789 },
+      { indice: 4, x: 2320, y: 848 },
+      { indice: 5, x: 2201, y: 848 },
+      { indice: 6, x: 2062, y: 848 },
+      { indice: 7, x: 1858, y: 848 },
+      { indice: 8, x: 2418, y: 850 },
+      { indice: 9, x: 2531, y: 848 },
+      { indice: 10, x: 2640, y: 848 },
+      { indice: 11, x: 2418, y: 1035 },
+      { indice: 12, x: 2204, y: 1104 },
+      { indice: 13, x: 1840, y: 1104 },
+      { indice: 14, x: 2045, y: 1104 },
+      { indice: 15, x: 2535, y: 1104 },
+      { indice: 16, x: 2535, y: 1104 },
+      { indice: 17, x: 2318, y: 1104 },
+      { indice: 18, x: 2702, y: 1136 },
+      { indice: 19, x: 2859, y: 1136 },
+      { indice: 20, x: 3218, y: 848 },
+      { indice: 21, x: 3413, y: 848 },
+      { indice: 22, x: 3403, y: 718 },
+      { indice: 23, x: 3403, y: 594 },
+      { indice: 24, x: 3570, y: 848 },
+      { indice: 25, x: 3820, y: 746 },
+      { indice: 26, x: 3511, y: 957 },
+      { indice: 27, x: 3169, y: 1095 },
+      { indice: 27, x: 3512, y: 1085 },
+      { indice: 27, x: 3893, y: 1037 }
     ]
     this.cristais.forEach((cristal) => {
       cristal.objeto = this.physics.add.sprite(cristal.x, cristal.y, 'cristal')
@@ -1792,7 +1041,7 @@ export default class mapa extends Phaser.Scene {
         }
       })
     }
-    
+
     if (this.bats && this.batsAndam) {
       this.bats.forEach((bat) => {
         // bat segue personagem mais próximo
@@ -1834,7 +1083,7 @@ export default class mapa extends Phaser.Scene {
         }
       })
     }
-    
+
     if (this.slimes && this.slimesAndam) {
       this.slimes.forEach((slime) => {
         // slime segue personagem mais próximo
@@ -1903,8 +1152,8 @@ export default class mapa extends Phaser.Scene {
 
       this.personagemLocal.setVelocity(velocityX, velocityY)
 
-      // console.log('x: ', this.personagemLocal.x)
-      // console.log('y: ', this.personagemLocal.y)
+       console.log('x: ', this.personagemLocal.x)
+       console.log('y: ', this.personagemLocal.y)
 
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
@@ -1968,13 +1217,10 @@ export default class mapa extends Phaser.Scene {
 
     // Verifica se o personagem está nas proximidades das coordenadas especificadas para ida
     if (this.personagemLocal.x === 3824 && this.personagemLocal.y === 656) {
-      this.personagemLocal.setPosition(574, 1300)
+      this.personagemLocal.setPosition(433, 1392)
       this.activateTeleportCooldown()
-    }
-
-    // Verifica se o personagem está nas proximidades das coordenadas especificadas para volta
-    else if (this.personagemLocal.x >= 1800 && this.personagemLocal.x <= 1830 && this.personagemLocal.y === 1936) {
-      this.personagemLocal.setPosition(3089, 816)
+    } else if (this.personagemLocal.x >= 412 && this.personagemLocal.x <= 456 && this.personagemLocal.y === 1392) {
+      this.personagemLocal.setPosition(3824, 692)
       this.activateTeleportCooldown()
     }
   }
@@ -1982,7 +1228,7 @@ export default class mapa extends Phaser.Scene {
   activateTeleportCooldown () {
     this.teleportCooldown = true
     this.time.addEvent({
-      delay: 500, // Tempo de cooldown em milissegundos
+      delay: 1000, // Tempo de cooldown em milissegundos
       callback: () => {
         this.teleportCooldown = false
       }
