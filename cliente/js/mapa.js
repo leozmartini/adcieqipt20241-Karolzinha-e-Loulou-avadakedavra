@@ -16,6 +16,7 @@ export default class mapa extends Phaser.Scene {
     this.load.audio('slimemorre', './assets/audios/slimemorre.mp3')
     this.load.audio('slimepulo', './assets/audios/slimepulo.mp3')
     this.load.audio('hurt', './assets/audios/hurt.mp3')
+    this.load.audio('shin', './assets/audios/shin.mp3')
 
     // Carregar o mapa
     this.load.tilemapTiledJSON('mapa', './assets/mapa/umapinha.json')
@@ -32,6 +33,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('meninoataque', './assets/personagens/meninoataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('meninaataque', './assets/personagens/meninaataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('armadilha', './assets/animacoes/armadilha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('portao', './assets/animacoes/portao.png', { frameWidth: 96, frameHeight: 64 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('bat', './assets/inimigos/bat.png', { frameWidth: 32, frameHeight: 32 })
@@ -42,6 +44,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('pocaorosa', './assets/animacoes/pocaorosa.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('pocaoverde', './assets/animacoes/pocaoverde.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('pocaoazul', './assets/animacoes/pocaoazul.png', { frameWidth: 28, frameHeight: 56 })
+    this.load.spritesheet('pocaoverme', './assets/animacoes/pocaoverme.png', { frameWidth: 28, frameHeight: 56 })
     this.load.spritesheet('agua', './assets/animacoes/agua.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('aguaborda', './assets/animacoes/aguaborda.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('vida', './assets/vida.png', { frameWidth: 146, frameHeight: 36 })
@@ -68,6 +71,7 @@ export default class mapa extends Phaser.Scene {
     this.slimemorre = this.sound.add('slimemorre')
     this.slimepulo = this.sound.add('slimepulo')
     this.hurt = this.sound.add('hurt')
+    this.shin = this.sound.add('shin')
 
     // Cria objeto do mapa
     this.tilemapMapa = this.make.tilemap({ key: 'mapa' })
@@ -292,6 +296,15 @@ export default class mapa extends Phaser.Scene {
       }),
       frameRate: 8
     })
+    this.anims.create({
+      key: 'armadilha-anim',
+      frames: this.anims.generateFrameNumbers('armadilha', {
+        start: 0,
+        end: 25,
+        repeat: -1
+      }),
+      frameRate: 12
+    })
     this.blocosquebra = [
       { indice: 1, x: 560, y: 1008 },
       { indice: 2, x: 368, y: 848 },
@@ -299,6 +312,18 @@ export default class mapa extends Phaser.Scene {
     ]
     this.blocosquebra.forEach((blocoquebra) => {
       blocoquebra.objeto = this.physics.add.sprite(blocoquebra.x, blocoquebra.y, 'blocoquebra')
+    })
+    this.armadilhas = [
+      { indice: 1, x: 720, y: 816 },
+      { indice: 2, x: 720, y: 848 },
+      { indice: 3, x: 432, y: 784 },
+      { indice: 4, x: 944, y: 848 },
+      { indice: 5, x: 1104, y: 784 },
+      { indice: 6, x: 1232, y: 816 }
+    ]
+    this.armadilhas.forEach((armadilha) => {
+      armadilha.objeto = this.physics.add.sprite(armadilha.x, armadilha.y, 'armadilha')
+      armadilha.objeto.anims.play('armadilha-anim', true)
     })
     this.buracos = [
       { indice: 1, x: 4048, y: 110 },
@@ -309,11 +334,11 @@ export default class mapa extends Phaser.Scene {
       buraco.objeto = this.physics.add.sprite(buraco.x, buraco.y, 'buraco')
     })
     this.grades = [
-      { indice: 1, x: 912, y: 592 },
-      { indice: 2, x: 880, y: 592 },
-      { indice: 3, x: 848, y: 592 },
-      { indice: 4, x: 816, y: 592 },
-      { indice: 5, x: 784, y: 592 }
+      { indice: 1, x: 912, y: 576 },
+      { indice: 2, x: 880, y: 576 },
+      { indice: 3, x: 848, y: 576 },
+      { indice: 4, x: 816, y: 576 },
+      { indice: 5, x: 784, y: 576 }
     ]
     this.grades.forEach((grade) => {
       grade.objeto = this.physics.add.sprite(grade.x, grade.y, 'grade')
@@ -350,8 +375,8 @@ export default class mapa extends Phaser.Scene {
       })
 
       // this.blocoquebra = this.physics.add.sprite(590, 1442, 'blocoquebra')
-      this.personagemLocal = this.physics.add.sprite(2285, 410, 'menino')
-      this.personagemRemoto = this.add.sprite(2285, 600, 'menina')
+      this.personagemLocal = this.physics.add.sprite(2317, 432, 'menino')
+      this.personagemRemoto = this.add.sprite(2343, 432, 'menina')
     } else if (globalThis.game.jogadores.segundo === globalThis.game.socket.id) {
       globalThis.game.localConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.localConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -382,8 +407,8 @@ export default class mapa extends Phaser.Scene {
       })
 
       // Cria os sprites dos personagens local e remoto
-      this.personagemLocal = this.physics.add.sprite(2285, 410, 'menina')
-      this.personagemRemoto = this.add.sprite(2285, 600, 'menino')
+      this.personagemLocal = this.physics.add.sprite(2343, 432, 'menina')
+      this.personagemRemoto = this.add.sprite(2317, 432, 'menino')
     }
 
     this.grades.forEach((grade) => {
@@ -416,6 +441,20 @@ export default class mapa extends Phaser.Scene {
           this.personagemLocal.setTint(0xffffff)
         }, 1500)
         this.vida.setFrame(this.vida.frame.name + 1)
+      }, null, this)
+    })
+    this.armadilhas.forEach((armadilha) => {
+      armadilha.overlap = this.physics.add.overlap(this.personagemLocal, this.armadilha, () => {
+        if (armadilha.objeto.frame.name >= 17) {
+          this.hurt.play()
+          this.physics.world.removeCollider(armadilha.overlap)
+          this.personagemLocal.setTint(0xff0000)
+          setTimeout(() => {
+            this.physics.world.colliders.add(armadilha.overlap)
+            this.personagemLocal.setTint(0xffffff)
+          }, 1500)
+          this.vida.setFrame(this.vida.frame.name + 1)
+        }
       }, null, this)
     })
     this.buracos.forEach((buraco) => {
@@ -454,6 +493,12 @@ export default class mapa extends Phaser.Scene {
       repeat: -1
     })
     this.anims.create({
+      key: 'pocaoverme-brilhando',
+      frames: this.anims.generateFrameNumbers('pocaoverme', { start: 0, end: 5 }),
+      frameRate: 10,
+      repeat: -1
+    })
+    this.anims.create({
       key: 'pocaoverde-coletado',
       frames: this.anims.generateFrameNumbers('pocaoverde', { start: 6, end: 9 }),
       frameRate: 10
@@ -461,6 +506,11 @@ export default class mapa extends Phaser.Scene {
     this.anims.create({
       key: 'pocaoazul-coletado',
       frames: this.anims.generateFrameNumbers('pocaoazul', { start: 6, end: 9 }),
+      frameRate: 10
+    })
+    this.anims.create({
+      key: 'pocaoverme-coletado',
+      frames: this.anims.generateFrameNumbers('pocaoverme', { start: 6, end: 9 }),
       frameRate: 10
     })
 
@@ -517,6 +567,25 @@ export default class mapa extends Phaser.Scene {
       this.pocaoazul.once('animationcomplete', () => {
         // Desativa a nuvem (imagem e colisão)
         this.pocaoazul.disableBody(true, true)
+        if (this.vida.frame.name >= 0) {
+          this.vida.setFrame(this.vida.frame.name - 1)
+        }
+      })
+    }, null, this)
+    this.pocaoverme = this.physics.add.sprite(800, 478, 'pocaoverme')
+    this.pocaoverme.anims.play('pocaoverme-brilhando')
+    this.pocaoverme.overlap = this.physics.add.overlap(this.personagemLocal, this.pocaoverme, () => {
+      this.coletar2.play()
+      // Desativa o overlap entre personagem e nuvem
+      this.pocaoverme.overlap.destroy()
+
+      // Anima a nuvem
+      this.pocaoverme.anims.play('pocaoverme-coletado')
+
+      // Assim que a animação terminar...
+      this.pocaoverme.once('animationcomplete', () => {
+        // Desativa a nuvem (imagem e colisão)
+        this.pocaoverme.disableBody(true, true)
         if (this.vida.frame.name >= 0) {
           this.vida.setFrame(this.vida.frame.name - 1)
         }
@@ -599,7 +668,7 @@ export default class mapa extends Phaser.Scene {
       { x: 2039, y: 784 },
       { x: 1978, y: 880 },
       { x: 2619, y: 784 },
-      { x: 2640, y: 880 }
+      { x: 2282, y: 912 }
     ]
     this.aranhas.forEach((aranha) => {
       aranha.sprite = this.physics.add.sprite(aranha.x, aranha.y, 'aranha')
@@ -631,7 +700,7 @@ export default class mapa extends Phaser.Scene {
     this.bats = [
       { x: 3003, y: 923 },
       { x: 2959, y: 868 },
-      { x: 2803, y: 871 },
+      { x: 2814, y: 816 },
       { x: 3031, y: 829 }
     ]
     this.bats.forEach((bat) => {
@@ -662,11 +731,12 @@ export default class mapa extends Phaser.Scene {
       }, null, this)
     })
     this.slimes = [
-      { x: 766, y: 1331 },
-      { x: 672, y: 1367 },
-      { x: 444, y: 1314 },
-      { x: 656, y: 1097 },
-      { x: 354, y: 938 }
+      { x: 490, y: 1232 },
+      { x: 784, y: 1269 },
+      { x: 685, y: 1392 },
+      { x: 336, y: 1040 },
+      { x: 240, y: 944 },
+      { x: 272, y: 944 }
     ]
     this.slimes.forEach((slime) => {
       slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
@@ -760,8 +830,14 @@ export default class mapa extends Phaser.Scene {
       { indice: 25, x: 3820, y: 746 },
       { indice: 26, x: 3511, y: 957 },
       { indice: 27, x: 3169, y: 1095 },
-      { indice: 27, x: 3512, y: 1085 },
-      { indice: 27, x: 3893, y: 1037 }
+      { indice: 28, x: 3512, y: 1085 },
+      { indice: 29, x: 3893, y: 1037 },
+      { indice: 30, x: 3973, y: 892 },
+      { indice: 31, x: 370, y: 1264 },
+      { indice: 32, x: 769, y: 1323 },
+      { indice: 33, x: 735, y: 1341 },
+      { indice: 34, x: 62, y: 894 },
+      { indice: 35, x: 870, y: 470 }
     ]
     this.cristais.forEach((cristal) => {
       cristal.objeto = this.physics.add.sprite(cristal.x, cristal.y, 'cristal')
@@ -1152,8 +1228,8 @@ export default class mapa extends Phaser.Scene {
 
       this.personagemLocal.setVelocity(velocityX, velocityY)
 
-       console.log('x: ', this.personagemLocal.x)
-       console.log('y: ', this.personagemLocal.y)
+      console.log('x: ', this.personagemLocal.x)
+      console.log('y: ', this.personagemLocal.y)
 
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
@@ -1220,7 +1296,7 @@ export default class mapa extends Phaser.Scene {
       this.personagemLocal.setPosition(433, 1392)
       this.activateTeleportCooldown()
     } else if (this.personagemLocal.x >= 412 && this.personagemLocal.x <= 456 && this.personagemLocal.y === 1392) {
-      this.personagemLocal.setPosition(3824, 692)
+      this.personagemLocal.setPosition(3824, 688)
       this.activateTeleportCooldown()
     }
   }
