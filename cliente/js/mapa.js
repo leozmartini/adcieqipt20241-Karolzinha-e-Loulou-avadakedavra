@@ -296,15 +296,17 @@ export default class mapa extends Phaser.Scene {
       }),
       frameRate: 8
     })
+
     this.anims.create({
       key: 'armadilha-anim',
       frames: this.anims.generateFrameNumbers('armadilha', {
         start: 0,
-        end: 25,
-        repeat: -1
+        end: 25
       }),
-      frameRate: 12
+      frameRate: 12,
+      repeat: -1
     })
+
     this.blocosquebra = [
       { indice: 1, x: 560, y: 1008 },
       { indice: 2, x: 368, y: 848 },
@@ -323,7 +325,10 @@ export default class mapa extends Phaser.Scene {
     ]
     this.armadilhas.forEach((armadilha) => {
       armadilha.objeto = this.physics.add.sprite(armadilha.x, armadilha.y, 'armadilha')
-      armadilha.objeto.anims.play('armadilha-anim', true)
+      armadilha.objeto.anims.play('armadilha-anim')
+      if (armadilha.objeto.anims.currentFrame.index === 17) {
+        this.shin.play()
+      }
     })
     this.buracos = [
       { indice: 1, x: 4048, y: 110 },
@@ -415,6 +420,7 @@ export default class mapa extends Phaser.Scene {
       this.physics.add.collider(this.personagemLocal, grade.objeto)
     })
     this.botaograde.colisao = this.physics.add.overlap(this.personagemLocal, this.botaograde, () => {
+      globalThis.game.dadosJogo.send(JSON.stringify({ botaoGradePressionado: true }))
       this.physics.world.removeCollider(this.botaograde.colisao)
       // Animação de pressionar o botão
       this.botaograde.play('botaograde-pressio')
@@ -444,8 +450,8 @@ export default class mapa extends Phaser.Scene {
       }, null, this)
     })
     this.armadilhas.forEach((armadilha) => {
-      armadilha.overlap = this.physics.add.overlap(this.personagemLocal, this.armadilha, () => {
-        if (armadilha.objeto.frame.name >= 17) {
+      armadilha.overlap = this.physics.add.overlap(this.personagemLocal, armadilha.objeto, () => {
+        if (armadilha.objeto.anims.currentFrame.index >= 17) {
           this.hurt.play()
           this.physics.world.removeCollider(armadilha.overlap)
           this.personagemLocal.setTint(0xff0000)
@@ -736,7 +742,8 @@ export default class mapa extends Phaser.Scene {
       { x: 685, y: 1392 },
       { x: 336, y: 1040 },
       { x: 240, y: 944 },
-      { x: 272, y: 944 }
+      { x: 332, y: 707 },
+      { x: 624, y: 656 }
     ]
     this.slimes.forEach((slime) => {
       slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
@@ -1023,6 +1030,22 @@ export default class mapa extends Phaser.Scene {
           }
         })
       }
+
+      if (dados.botaoGradePressionado) {
+        this.physics.world.removeCollider(this.botaograde.colisao)
+        // Animação de pressionar o botão
+        this.botaograde.play('botaograde-pressio')
+
+        // Animação de "descer" para cada grade e remoção da colisão
+        this.grades.forEach((grade) => {
+          grade.objeto.play('grade-desce')
+
+          // Removendo a colisão após a animação iniciar
+          grade.objeto.on('animationcomplete', () => {
+            grade.objeto.disableBody(true, true)
+          })
+        })
+      }
     }
   }
 
@@ -1213,7 +1236,6 @@ export default class mapa extends Phaser.Scene {
       this.scene.stop('mapa')
       this.scene.start('finalFeliz')
     }
-
     this.handleJoystickMove()
     this.checkTeleport()
   }
@@ -1228,8 +1250,8 @@ export default class mapa extends Phaser.Scene {
 
       this.personagemLocal.setVelocity(velocityX, velocityY)
 
-      console.log('x: ', this.personagemLocal.x)
-      console.log('y: ', this.personagemLocal.y)
+      // console.log('x: ', this.personagemLocal.x)
+      // console.log('y: ', this.personagemLocal.y)
 
       // Animação do personagem conforme a direção do movimento
       if (Math.abs(velocityX) > Math.abs(velocityY)) {
