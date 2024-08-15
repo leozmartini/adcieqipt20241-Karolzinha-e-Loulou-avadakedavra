@@ -6,6 +6,7 @@ export default class mapa extends Phaser.Scene {
     this.aranhasAndam = false
     this.batsAndam = false
     this.slimesAndam = false
+    this.fantasmasAndam = false
   }
 
   preload () {
@@ -38,6 +39,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('bat', './assets/inimigos/bat.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('slime', './assets/inimigos/slime.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('fantasma', './assets/inimigos/fantasma.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('grade', './assets/animacoes/grade.png', { frameWidth: 32, frameHeight: 64 })
     this.load.spritesheet('botaograde', './assets/animacoes/botaograde.png', { frameWidth: 32, frameHeight: 32 })
@@ -52,6 +54,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('blocovazio', './assets/blocovazio.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio2', './assets/blocovazio2.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio3', './assets/blocovazio3.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('blocovazio4', './assets/blocovazio4.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
@@ -614,6 +617,11 @@ export default class mapa extends Phaser.Scene {
       globalThis.game.dadosJogo.send(JSON.stringify({ slimesAndam: true }))
       this.slimesAndam = true
     }, null, this)
+    this.blocovazio4 = this.physics.add.sprite(752, 832, 'blocovazio4')
+    this.physics.add.overlap(this.personagemLocal, this.blocovazio4, () => {
+      globalThis.game.dadosJogo.send(JSON.stringify({ fantasmasAndam: true }))
+      this.fantasmasAndam = true
+    }, null, this)
 
     this.anims.create({
       key: 'grade-descendo',
@@ -627,6 +635,17 @@ export default class mapa extends Phaser.Scene {
     })
 
     // Movimentos du zinimigo
+    this.anims.create({
+      key: 'fantasma-andando',
+      frames: this.anims.generateFrameNumbers('fantasma', { start: 0, end: 3 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'fantasma-some',
+      frames: this.anims.generateFrameNumbers('fantasma', { start: 8, end: 14 }),
+      frameRate: 9
+    })
     this.anims.create({
       key: 'slime-andando',
       frames: this.anims.generateFrameNumbers('slime', { start: 0, end: 5 }),
@@ -766,6 +785,40 @@ export default class mapa extends Phaser.Scene {
           this.personagemLocal.setTint(0xff0000)
           setTimeout(() => {
             this.physics.world.colliders.add(slime.colisao)
+            this.personagemLocal.setTint(0xffffff)
+          }, 1000)
+
+          this.vida.setFrame(this.vida.frame.name + 1)
+        }
+      }, null, this)
+    })
+    this.fantasmas = [
+      { x: 912, y: 624 },
+      { x: 811, y: 718 },
+      { x: 1220, y: 672 },
+      { x: 1154, y: 805 },
+      { x: 1027, y: 825 },
+      { x: 973, y: 944 }
+    ]
+    this.fantasmas.forEach((fantasma) => {
+      fantasma.sprite = this.physics.add.sprite(fantasma.x, fantasma.y, 'fantasma')
+      fantasma.sprite.anims.play('fantasma-andando')
+      this.physics.add.collider(fantasma.sprite, this.layerparedemsm)
+      this.physics.add.collider(fantasma.sprite, this.layerarbustos)
+
+      fantasma.colisao = this.physics.add.overlap(fantasma.sprite, this.personagemLocal, () => {
+        this.physics.world.removeCollider(fantasma.colisao)
+
+        if (this.personagemLocal.texture.key.match(/ataque/)) {
+          fantasma.sprite.anims.play('fantasma-some')
+          fantasma.sprite.once('animationcomplete', () => {
+            fantasma.sprite.disableBody(true, true)
+          })
+        } else {
+          this.hurt.play()
+          this.personagemLocal.setTint(0xff0000)
+          setTimeout(() => {
+            this.physics.world.colliders.add(fantasma.colisao)
             this.personagemLocal.setTint(0xffffff)
           }, 1000)
 
@@ -973,7 +1026,7 @@ export default class mapa extends Phaser.Scene {
     this.cameras.main.setZoom(1.5)
 
     // Variáveis de velocidade e threshold
-    this.speed = 150 // Velocidade constante do personagem
+    this.speed = 200 // Velocidade constante do personagem
     this.threshold = 0.1 // Limite mínimo de força para considerar o movimento
 
     globalThis.game.dadosJogo.onmessage = (event) => {
@@ -987,6 +1040,9 @@ export default class mapa extends Phaser.Scene {
       }
       if (dados.slimesAndam) {
         this.slimesAndam = true
+      }
+      if (dados.fantasmasAndam) {
+        this.fantasmasAndam = true
       }
 
       if (dados.gameover) {
@@ -1027,6 +1083,13 @@ export default class mapa extends Phaser.Scene {
         this.slimes.forEach((slime, i) => {
           if (!dados.slimes[i].visible) {
             slime.sprite.disableBody(true, true)
+          }
+        })
+      }
+      if (dados.fantasmas) {
+        this.fantasmas.forEach((fantasma, i) => {
+          if (!dados.fantasmas[i].visible) {
+            fantasma.sprite.disableBody(true, true)
           }
         })
       }
@@ -1091,6 +1154,13 @@ export default class mapa extends Phaser.Scene {
               slimes: this.slimes.map(slime => (slime => ({
                 visible: slime.sprite.visible
               }))(slime))
+            }))
+          }
+          if (this.fantasmas) {
+            globalThis.game.dadosJogo.send(JSON.stringify({
+              fantasmas: this.fantasmas.map(fantasma => (fantasma => ({
+                visible: fantasma.sprite.visible
+              }))(fantasma))
             }))
           }
         }
@@ -1221,6 +1291,47 @@ export default class mapa extends Phaser.Scene {
           slime.sprite.setVelocityY(40)
         } else if (diffY <= 10) {
           slime.sprite.setVelocityY(-40)
+        }
+      })
+    }
+    if (this.fantasmas && this.fantasmasAndam) {
+      this.fantasmas.forEach((fantasma) => {
+        // fantasma segue personagem mais próximo
+        const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
+          this.personagemLocal.x,
+          this.personagemLocal.y,
+          fantasma.sprite.x,
+          fantasma.sprite.y
+        )
+
+        const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
+          this.personagemRemoto.x,
+          this.personagemRemoto.y,
+          fantasma.sprite.x,
+          fantasma.sprite.y
+        )
+
+        // Por padrão, o primeiro jogador é o alvo
+        let alvo = this.personagemLocal
+        if (hipotenusaPersonagemLocal > hipotenusaPersonagemRemoto) {
+          // Jogador 2 é perseguido pelo fantasma
+          alvo = this.personagemRemoto
+        }
+
+        // Sentido no eixo X
+        const diffX = alvo.x - fantasma.sprite.x
+        if (diffX >= 10) {
+          fantasma.sprite.setVelocityX(40)
+        } else if (diffX <= 10) {
+          fantasma.sprite.setVelocityX(-40)
+        }
+
+        // Sentido no eixo Y
+        const diffY = alvo.y - fantasma.sprite.y
+        if (diffY >= 10) {
+          fantasma.sprite.setVelocityY(40)
+        } else if (diffY <= 10) {
+          fantasma.sprite.setVelocityY(-40)
         }
       })
     }
