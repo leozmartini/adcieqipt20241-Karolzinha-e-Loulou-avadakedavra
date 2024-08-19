@@ -7,6 +7,7 @@ export default class mapa extends Phaser.Scene {
     this.batsAndam = false
     this.slimesAndam = false
     this.fantasmasAndam = false
+    this.beybladesAndam = false
   }
 
   preload () {
@@ -35,11 +36,13 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('meninaataque', './assets/personagens/meninaataque.png', { frameWidth: 64, frameHeight: 64 })
     this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('armadilha', './assets/animacoes/armadilha.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('armadilhafake', './assets/animacoes/armadilhafake.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('portao', './assets/animacoes/portao.png', { frameWidth: 96, frameHeight: 64 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('bat', './assets/inimigos/bat.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('slime', './assets/inimigos/slime.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('fantasma', './assets/inimigos/fantasma.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('beyblade', './assets/inimigos/beyblade.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('cristal', './assets/animacoes/cristal.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('grade', './assets/animacoes/grade.png', { frameWidth: 32, frameHeight: 64 })
     this.load.spritesheet('botaograde', './assets/animacoes/botaograde.png', { frameWidth: 32, frameHeight: 32 })
@@ -55,6 +58,7 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('blocovazio2', './assets/blocovazio2.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio3', './assets/blocovazio3.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('blocovazio4', './assets/blocovazio4.png', { frameWidth: 32, frameHeight: 32 })
+    this.load.spritesheet('blocovazio5', './assets/blocovazio5.png', { frameWidth: 32, frameHeight: 32 })
 
     // Carrega o plugin do joystick virtual
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true)
@@ -309,6 +313,15 @@ export default class mapa extends Phaser.Scene {
       frameRate: 12,
       repeat: -1
     })
+    this.anims.create({
+      key: 'armadilhafake-anim',
+      frames: this.anims.generateFrameNumbers('armadilhafake', {
+        start: 0,
+        end: 25
+      }),
+      frameRate: 12,
+      repeat: -1
+    })
 
     this.blocosquebra = [
       { indice: 1, x: 560, y: 1008 },
@@ -333,6 +346,14 @@ export default class mapa extends Phaser.Scene {
         this.shin.play()
       }
     })
+    this.armadilhasfake = [
+      { indice: 2, x: 720, y: 848 },
+      { indice: 3, x: 432, y: 816 }
+    ]
+    this.armadilhasfake.forEach((armadilhafake) => {
+      armadilhafake.objeto = this.physics.add.sprite(armadilhafake.x, armadilhafake.y, 'armadilhafake')
+      armadilhafake.objeto.anims.play('armadilhafake-anim')
+    })
     this.buracos = [
       { indice: 1, x: 4048, y: 110 },
       { indice: 2, x: 3315, y: 11 },
@@ -354,6 +375,148 @@ export default class mapa extends Phaser.Scene {
     })
     this.botaograde = this.physics.add.sprite(496, 816, 'botaograde')
 
+    this.anims.create({
+      key: 'aranha-andando',
+      frames: this.anims.generateFrameNumbers('aranha', { start: 7, end: 10 }),
+      frameRate: 9,
+      repeat: -1
+    })
+
+    this.anims.create({
+      key: 'aranha-some',
+      frames: this.anims.generateFrameNumbers('aranha', { start: 0, end: 6 }),
+      frameRate: 9
+    })
+
+    // Define o movimento du zinimigo para seguir o personagem
+    this.aranhas = [
+      { x: 2039, y: 784 },
+      { x: 1978, y: 880 },
+      { x: 2619, y: 784 },
+      { x: 2282, y: 912 },
+      { x: 2448, y: 1029 },
+      { x: 1891, y: 1004 },
+      { x: 2032, y: 1168 },
+      { x: 2906, y: 1168 },
+      { x: 2736, y: 1040 },
+      { x: 2672, y: 1072 }
+    ]
+    this.aranhas.forEach((aranha) => {
+      aranha.sprite = this.physics.add.sprite(aranha.x, aranha.y, 'aranha')
+      aranha.sprite.anims.play('aranha-andando')
+      this.physics.add.collider(aranha.sprite, this.layerparedemsm)
+      this.physics.add.collider(aranha.sprite, this.layerarbustos)
+    })
+
+    this.anims.create({
+      key: 'bat-esquerda',
+      frames: this.anims.generateFrameNumbers('bat', { start: 0, end: 4 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'bat-direita',
+      frames: this.anims.generateFrameNumbers('bat', { start: 5, end: 9 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'bat-some',
+      frames: this.anims.generateFrameNumbers('bat', { start: 10, end: 15 }),
+      frameRate: 9
+    })
+    this.bats = [
+      { x: 3003, y: 923 },
+      { x: 2959, y: 868 },
+      { x: 2814, y: 816 },
+      { x: 3031, y: 829 }
+    ]
+    this.bats.forEach((bat) => {
+      bat.sprite = this.physics.add.sprite(bat.x, bat.y, 'bat')
+      bat.sprite.anims.play('bat-esquerda')
+      this.physics.add.collider(bat.sprite, this.layerparedemsm)
+      this.physics.add.collider(bat.sprite, this.layerarbustos)
+    })
+    this.anims.create({
+      key: 'slime-andando',
+      frames: this.anims.generateFrameNumbers('slime', { start: 0, end: 5 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'slime-some',
+      frames: this.anims.generateFrameNumbers('slime', { start: 6, end: 13 }),
+      frameRate: 9
+    })
+    this.slimes = [
+      { x: 490, y: 1232 },
+      { x: 784, y: 1269 },
+      { x: 685, y: 1392 },
+      { x: 336, y: 1040 },
+      { x: 240, y: 944 },
+      { x: 332, y: 707 },
+      { x: 624, y: 656 }
+    ]
+    this.slimes.forEach((slime) => {
+      slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
+      slime.sprite.anims.play('slime-andando')
+      this.slimepulo.play()
+      this.physics.add.collider(slime.sprite, this.layerparedemsm)
+      this.physics.add.collider(slime.sprite, this.layerarbustos)
+    })
+    this.anims.create({
+      key: 'fantasma-andando',
+      frames: this.anims.generateFrameNumbers('fantasma', { start: 0, end: 3 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'fantasma-some',
+      frames: this.anims.generateFrameNumbers('fantasma', { start: 8, end: 14 }),
+      frameRate: 9
+    })
+    this.fantasmas = [
+      { x: 912, y: 624 },
+      { x: 811, y: 718 },
+      { x: 1220, y: 672 },
+      { x: 1154, y: 805 },
+      { x: 1027, y: 825 },
+      { x: 973, y: 944 }
+    ]
+    this.fantasmas.forEach((fantasma) => {
+      fantasma.sprite = this.physics.add.sprite(fantasma.x, fantasma.y, 'fantasma')
+      fantasma.sprite.anims.play('fantasma-andando')
+      this.physics.add.collider(fantasma.sprite, this.layerparedemsm)
+      this.physics.add.collider(fantasma.sprite, this.layerarbustos)
+    })
+
+    this.anims.create({
+      key: 'beyblade-andando',
+      frames: this.anims.generateFrameNumbers('beyblade', { start: 0, end: 7 }),
+      frameRate: 9,
+      repeat: -1
+    })
+    this.anims.create({
+      key: 'beyblade-ataque',
+      frames: this.anims.generateFrameNumbers('beyblade', { start: 8, end: 10 }),
+      frameRate: 12,
+      repeat: 2
+    })
+    this.anims.create({
+      key: 'beyblade-some',
+      frames: this.anims.generateFrameNumbers('beyblade', { start: 11, end: 18 }),
+      frameRate: 9
+    })
+    this.beyblades = [
+      { x: 57, y: 710 },
+      { x: 80, y: 944 }
+    ]
+    this.beyblades.forEach((beyblade) => {
+      beyblade.sprite = this.physics.add.sprite(beyblade.x, beyblade.y, 'beyblade')
+      beyblade.sprite.anims.play('beyblade-andando')
+      this.physics.add.collider(beyblade.sprite, this.layerparedemsm)
+      this.physics.add.collider(beyblade.sprite, this.layerarbustos)
+    })
     if (globalThis.game.jogadores.primeiro === globalThis.game.socket.id) {
       globalThis.game.remoteConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.remoteConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -622,6 +785,11 @@ export default class mapa extends Phaser.Scene {
       globalThis.game.dadosJogo.send(JSON.stringify({ fantasmasAndam: true }))
       this.fantasmasAndam = true
     }, null, this)
+    this.blocovazio5 = this.physics.add.sprite(174, 817, 'blocovazio5')
+    this.physics.add.overlap(this.personagemLocal, this.blocovazio5, () => {
+      globalThis.game.dadosJogo.send(JSON.stringify({ beybladesAndam: true }))
+      this.beybladesAndam = true
+    }, null, this)
 
     this.anims.create({
       key: 'grade-descendo',
@@ -633,74 +801,7 @@ export default class mapa extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers('portao', { start: 0, end: 10 }),
       frameRate: 10
     })
-
-    // Movimentos du zinimigo
-    this.anims.create({
-      key: 'fantasma-andando',
-      frames: this.anims.generateFrameNumbers('fantasma', { start: 0, end: 3 }),
-      frameRate: 9,
-      repeat: -1
-    })
-    this.anims.create({
-      key: 'fantasma-some',
-      frames: this.anims.generateFrameNumbers('fantasma', { start: 8, end: 14 }),
-      frameRate: 9
-    })
-    this.anims.create({
-      key: 'slime-andando',
-      frames: this.anims.generateFrameNumbers('slime', { start: 0, end: 5 }),
-      frameRate: 9,
-      repeat: -1
-    })
-    this.anims.create({
-      key: 'slime-some',
-      frames: this.anims.generateFrameNumbers('slime', { start: 6, end: 13 }),
-      frameRate: 9
-    })
-    this.anims.create({
-      key: 'bat-esquerda',
-      frames: this.anims.generateFrameNumbers('bat', { start: 0, end: 4 }),
-      frameRate: 9,
-      repeat: -1
-    })
-    this.anims.create({
-      key: 'bat-direita',
-      frames: this.anims.generateFrameNumbers('bat', { start: 5, end: 9 }),
-      frameRate: 9,
-      repeat: -1
-    })
-    this.anims.create({
-      key: 'bat-some',
-      frames: this.anims.generateFrameNumbers('bat', { start: 10, end: 15 }),
-      frameRate: 9
-    })
-
-    this.anims.create({
-      key: 'aranha-andando',
-      frames: this.anims.generateFrameNumbers('aranha', { start: 7, end: 10 }),
-      frameRate: 9,
-      repeat: -1
-    })
-
-    this.anims.create({
-      key: 'aranha-some',
-      frames: this.anims.generateFrameNumbers('aranha', { start: 0, end: 6 }),
-      frameRate: 9
-    })
-
-    // Define o movimento du zinimigo para seguir o personagem
-    this.aranhas = [
-      { x: 2039, y: 784 },
-      { x: 1978, y: 880 },
-      { x: 2619, y: 784 },
-      { x: 2282, y: 912 }
-    ]
     this.aranhas.forEach((aranha) => {
-      aranha.sprite = this.physics.add.sprite(aranha.x, aranha.y, 'aranha')
-      aranha.sprite.anims.play('aranha-andando')
-      this.physics.add.collider(aranha.sprite, this.layerparedemsm)
-      this.physics.add.collider(aranha.sprite, this.layerarbustos)
-
       aranha.colisao = this.physics.add.overlap(aranha.sprite, this.personagemLocal, () => {
         this.physics.world.removeCollider(aranha.colisao)
 
@@ -722,18 +823,7 @@ export default class mapa extends Phaser.Scene {
         }
       }, null, this)
     })
-    this.bats = [
-      { x: 3003, y: 923 },
-      { x: 2959, y: 868 },
-      { x: 2814, y: 816 },
-      { x: 3031, y: 829 }
-    ]
     this.bats.forEach((bat) => {
-      bat.sprite = this.physics.add.sprite(bat.x, bat.y, 'bat')
-      bat.sprite.anims.play('bat-esquerda')
-      this.physics.add.collider(bat.sprite, this.layerparedemsm)
-      this.physics.add.collider(bat.sprite, this.layerarbustos)
-
       bat.colisao = this.physics.add.overlap(bat.sprite, this.personagemLocal, () => {
         this.physics.world.removeCollider(bat.colisao)
 
@@ -755,22 +845,7 @@ export default class mapa extends Phaser.Scene {
         }
       }, null, this)
     })
-    this.slimes = [
-      { x: 490, y: 1232 },
-      { x: 784, y: 1269 },
-      { x: 685, y: 1392 },
-      { x: 336, y: 1040 },
-      { x: 240, y: 944 },
-      { x: 332, y: 707 },
-      { x: 624, y: 656 }
-    ]
     this.slimes.forEach((slime) => {
-      slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
-      slime.sprite.anims.play('slime-andando')
-      this.slimepulo.play()
-      this.physics.add.collider(slime.sprite, this.layerparedemsm)
-      this.physics.add.collider(slime.sprite, this.layerarbustos)
-
       slime.colisao = this.physics.add.overlap(slime.sprite, this.personagemLocal, () => {
         this.physics.world.removeCollider(slime.colisao)
 
@@ -792,20 +867,7 @@ export default class mapa extends Phaser.Scene {
         }
       }, null, this)
     })
-    this.fantasmas = [
-      { x: 912, y: 624 },
-      { x: 811, y: 718 },
-      { x: 1220, y: 672 },
-      { x: 1154, y: 805 },
-      { x: 1027, y: 825 },
-      { x: 973, y: 944 }
-    ]
     this.fantasmas.forEach((fantasma) => {
-      fantasma.sprite = this.physics.add.sprite(fantasma.x, fantasma.y, 'fantasma')
-      fantasma.sprite.anims.play('fantasma-andando')
-      this.physics.add.collider(fantasma.sprite, this.layerparedemsm)
-      this.physics.add.collider(fantasma.sprite, this.layerarbustos)
-
       fantasma.colisao = this.physics.add.overlap(fantasma.sprite, this.personagemLocal, () => {
         this.physics.world.removeCollider(fantasma.colisao)
 
@@ -823,6 +885,30 @@ export default class mapa extends Phaser.Scene {
           }, 1000)
 
           this.vida.setFrame(this.vida.frame.name + 1)
+        }
+      }, null, this)
+    })
+    this.beyblades.forEach((beyblade) => {
+      beyblade.colisao = this.physics.add.overlap(beyblade.sprite, this.personagemLocal, () => {
+        this.physics.world.removeCollider(beyblade.colisao)
+
+        if (this.personagemLocal.texture.key.match(/ataque/)) {
+          beyblade.sprite.anims.play('beyblade-some')
+          beyblade.sprite.once('animationcomplete', () => {
+            beyblade.sprite.disableBody(true, true)
+          })
+        } else {
+          beyblade.sprite.anims.play('beyblade-ataque')
+          beyblade.sprite.once('animationcomplete', () => {
+            this.hurt.play()
+            this.personagemLocal.setTint(0xff0000)
+            setTimeout(() => {
+              this.physics.world.colliders.add(beyblade.colisao)
+              this.personagemLocal.setTint(0xffffff)
+            }, 1000)
+
+            this.vida.setFrame(this.vida.frame.name + 1)
+          })
         }
       }, null, this)
     })
@@ -1026,7 +1112,7 @@ export default class mapa extends Phaser.Scene {
     this.cameras.main.setZoom(1.5)
 
     // Variáveis de velocidade e threshold
-    this.speed = 200 // Velocidade constante do personagem
+    this.speed = 125 // Velocidade constante do personagem
     this.threshold = 0.1 // Limite mínimo de força para considerar o movimento
 
     globalThis.game.dadosJogo.onmessage = (event) => {
@@ -1043,6 +1129,9 @@ export default class mapa extends Phaser.Scene {
       }
       if (dados.fantasmasAndam) {
         this.fantasmasAndam = true
+      }
+      if (dados.beybladesAndam) {
+        this.beybladesAndam = true
       }
 
       if (dados.gameover) {
@@ -1093,6 +1182,13 @@ export default class mapa extends Phaser.Scene {
           }
         })
       }
+      if (dados.beyblades) {
+        this.beyblades.forEach((beyblade, i) => {
+          if (!dados.beyblades[i].visible) {
+            beyblade.sprite.disableBody(true, true)
+          }
+        })
+      }
 
       if (dados.botaoGradePressionado) {
         this.physics.world.removeCollider(this.botaograde.colisao)
@@ -1110,6 +1206,13 @@ export default class mapa extends Phaser.Scene {
         })
       }
     }
+    this.pontos = this.add.text(500, 85, 0, {
+      fontFamily: 'Roboto',
+      fontSize: '25px',
+      stroke: '#000000',
+      strokeThickness: 4,
+      fill: '#ffffff'
+    }).setScrollFactor(0)
   }
 
   update () {
@@ -1163,7 +1266,15 @@ export default class mapa extends Phaser.Scene {
               }))(fantasma))
             }))
           }
+          if (this.beyblades) {
+            globalThis.game.dadosJogo.send(JSON.stringify({
+              beyblades: this.beyblades.map(beyblade => (beyblade => ({
+                visible: beyblade.sprite.visible
+              }))(beyblade))
+            }))
+          }
         }
+        this.pontos.setText('cristais: ' + this.cristais.filter(cristal => !cristal.objeto.active).length + '/35')
       }
     } catch (error) {
       console.error('Erro ao enviar os dados do jogo: ', error)
@@ -1196,17 +1307,17 @@ export default class mapa extends Phaser.Scene {
         // Sentido no eixo X
         const diffX = alvo.x - aranha.sprite.x
         if (diffX >= 10) {
-          aranha.sprite.setVelocityX(40)
+          aranha.sprite.setVelocityX(50)
         } else if (diffX <= 10) {
-          aranha.sprite.setVelocityX(-40)
+          aranha.sprite.setVelocityX(-50)
         }
 
         // Sentido no eixo Y
         const diffY = alvo.y - aranha.sprite.y
         if (diffY >= 10) {
-          aranha.sprite.setVelocityY(40)
+          aranha.sprite.setVelocityY(50)
         } else if (diffY <= 10) {
-          aranha.sprite.setVelocityY(-40)
+          aranha.sprite.setVelocityY(-50)
         }
       })
     }
@@ -1238,17 +1349,17 @@ export default class mapa extends Phaser.Scene {
         // Sentido no eixo X
         const diffX = alvo.x - bat.sprite.x
         if (diffX >= 10) {
-          bat.sprite.setVelocityX(40)
+          bat.sprite.setVelocityX(50)
         } else if (diffX <= 10) {
-          bat.sprite.setVelocityX(-40)
+          bat.sprite.setVelocityX(-50)
         }
 
         // Sentido no eixo Y
         const diffY = alvo.y - bat.sprite.y
         if (diffY >= 10) {
-          bat.sprite.setVelocityY(40)
+          bat.sprite.setVelocityY(50)
         } else if (diffY <= 10) {
-          bat.sprite.setVelocityY(-40)
+          bat.sprite.setVelocityY(-50)
         }
       })
     }
@@ -1280,17 +1391,17 @@ export default class mapa extends Phaser.Scene {
         // Sentido no eixo X
         const diffX = alvo.x - slime.sprite.x
         if (diffX >= 10) {
-          slime.sprite.setVelocityX(40)
+          slime.sprite.setVelocityX(50)
         } else if (diffX <= 10) {
-          slime.sprite.setVelocityX(-40)
+          slime.sprite.setVelocityX(-50)
         }
 
         // Sentido no eixo Y
         const diffY = alvo.y - slime.sprite.y
         if (diffY >= 10) {
-          slime.sprite.setVelocityY(40)
+          slime.sprite.setVelocityY(50)
         } else if (diffY <= 10) {
-          slime.sprite.setVelocityY(-40)
+          slime.sprite.setVelocityY(-50)
         }
       })
     }
@@ -1321,17 +1432,58 @@ export default class mapa extends Phaser.Scene {
         // Sentido no eixo X
         const diffX = alvo.x - fantasma.sprite.x
         if (diffX >= 10) {
-          fantasma.sprite.setVelocityX(40)
+          fantasma.sprite.setVelocityX(50)
         } else if (diffX <= 10) {
-          fantasma.sprite.setVelocityX(-40)
+          fantasma.sprite.setVelocityX(-50)
         }
 
         // Sentido no eixo Y
         const diffY = alvo.y - fantasma.sprite.y
         if (diffY >= 10) {
-          fantasma.sprite.setVelocityY(40)
+          fantasma.sprite.setVelocityY(50)
         } else if (diffY <= 10) {
-          fantasma.sprite.setVelocityY(-40)
+          fantasma.sprite.setVelocityY(-50)
+        }
+      })
+    }
+    if (this.beyblades && this.beybladesAndam) {
+      this.beyblades.forEach((beyblade) => {
+        // beyblade segue personagem mais próximo
+        const hipotenusaPersonagemLocal = Phaser.Math.Distance.Between(
+          this.personagemLocal.x,
+          this.personagemLocal.y,
+          beyblade.sprite.x,
+          beyblade.sprite.y
+        )
+
+        const hipotenusaPersonagemRemoto = Phaser.Math.Distance.Between(
+          this.personagemRemoto.x,
+          this.personagemRemoto.y,
+          beyblade.sprite.x,
+          beyblade.sprite.y
+        )
+
+        // Por padrão, o primeiro jogador é o alvo
+        let alvo = this.personagemLocal
+        if (hipotenusaPersonagemLocal > hipotenusaPersonagemRemoto) {
+          // Jogador 2 é perseguido pelo beyblade
+          alvo = this.personagemRemoto
+        }
+
+        // Sentido no eixo X
+        const diffX = alvo.x - beyblade.sprite.x
+        if (diffX >= 10) {
+          beyblade.sprite.setVelocityX(50)
+        } else if (diffX <= 10) {
+          beyblade.sprite.setVelocityX(-50)
+        }
+
+        // Sentido no eixo Y
+        const diffY = alvo.y - beyblade.sprite.y
+        if (diffY >= 10) {
+          beyblade.sprite.setVelocityY(50)
+        } else if (diffY <= 10) {
+          beyblade.sprite.setVelocityY(-50)
         }
       })
     }
