@@ -1,3 +1,6 @@
+import Phaser from 'phaser'
+import axios from 'axios'
+
 export default class finalFeliz extends Phaser.Scene {
   constructor () {
     super('finalFeliz')
@@ -17,7 +20,7 @@ export default class finalFeliz extends Phaser.Scene {
     })
       .setInteractive()
       .on('pointerdown', () => {
-        location.reload()
+        window.location.reload()
       })
 
     // Inicializa o Google Sign-In
@@ -36,19 +39,19 @@ export default class finalFeliz extends Phaser.Scene {
             }
           })
             .then(function (response) {
-              globalThis.game.scene.getScene('finalFeliz').mensagem.setText('Parabéns! Você conseguiu! Seus tijolinhos foram creditados!')
+              console.log(response)
             })
             .catch(function (error) {
-              globalThis.game.scene.getScene('finalFeliz').mensagem.setText('Erro ao creditar tijolinhos:', error)
+              console.error(error)
             })
         }
       }
     })
 
     // Exibe o prompt de login
-    google.accounts.id.prompt((notification) => {
+    globalThis.google.accounts.id.prompt((notification) => {
       if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        google.accounts.id.prompt()
+        globalThis.google.accounts.id.prompt()
       }
     })
   }

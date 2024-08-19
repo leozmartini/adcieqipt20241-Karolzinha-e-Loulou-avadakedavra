@@ -1,3 +1,5 @@
+import Phaser from 'phaser'
+import io from 'socket.io-client'
 import config from './config.js'
 import abertura from './abertura.js'
 import sala from './sala.js'
@@ -16,7 +18,7 @@ class Game extends Phaser.Game {
       this.socket = io({ path: '/nomedojogo/socket.io/' })
       iceServers = [
         {
-          urls: 'stun:feira-de-jogos.dev.br',
+          urls: 'turn:feira-de-jogos.dev.br',
           username: 'adcieqipt20241',
           credential: 'adcieqipt20241'
         }
