@@ -3,6 +3,7 @@ import io from 'socket.io-client'
 import config from './config.js'
 import abertura from './abertura.js'
 import sala from './sala.js'
+import cutscene from './cutscene.js'
 import mapa from './mapa.js'
 import finalFeliz from './finalFeliz.js'
 import finalTriste from './finalTriste.js'
@@ -39,6 +40,7 @@ class Game extends Phaser.Game {
 
     this.scene.add('abertura', abertura)
     this.scene.add('sala', sala)
+    this.scene.add('cutscene', cutscene)
     this.scene.add('mapa', mapa)
     this.scene.add('finalFeliz', finalFeliz)
     this.scene.add('finalTriste', finalTriste)
