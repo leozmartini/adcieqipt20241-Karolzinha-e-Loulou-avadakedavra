@@ -32,6 +32,7 @@ export default class mapa extends Phaser.Scene {
     this.load.image('torre', './assets/mapa/torrebruxa.png')
 
     // Carregar spritesheets
+    this.load.spritesheet('mago', './assets/personagens/mago.png', { frameWidth: 48, frameHeight: 59 })
     this.load.spritesheet('menino', './assets/personagens/menino.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('menina', './assets/personagens/menina.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('meninoataque', './assets/personagens/meninoataque.png', { frameWidth: 64, frameHeight: 64 })
@@ -39,7 +40,6 @@ export default class mapa extends Phaser.Scene {
     this.load.spritesheet('blocoquebra', './assets/animacoes/blocoquebra.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('armadilha', './assets/animacoes/armadilha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('armadilhafake', './assets/animacoes/armadilhafake.png', { frameWidth: 32, frameHeight: 32 })
-    this.load.spritesheet('portao', './assets/animacoes/portao.png', { frameWidth: 96, frameHeight: 64 })
     this.load.spritesheet('aranha', './assets/inimigos/aranha.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('bat', './assets/inimigos/bat.png', { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet('slime', './assets/inimigos/slime.png', { frameWidth: 32, frameHeight: 32 })
@@ -462,7 +462,6 @@ export default class mapa extends Phaser.Scene {
     this.slimes.forEach((slime) => {
       slime.sprite = this.physics.add.sprite(slime.x, slime.y, 'slime')
       slime.sprite.anims.play('slime-andando')
-      this.slimepulo.play()
       this.physics.add.collider(slime.sprite, this.layerparedemsm)
       this.physics.add.collider(slime.sprite, this.layerarbustos)
     })
@@ -519,6 +518,20 @@ export default class mapa extends Phaser.Scene {
       this.physics.add.collider(beyblade.sprite, this.layerparedemsm)
       this.physics.add.collider(beyblade.sprite, this.layerarbustos)
     })
+    this.anims.create({
+      key: 'mago-parado',
+      frames: this.anims.generateFrameNumbers('mago', {
+        start: 0,
+        end: 1
+      }),
+      frameRate: 2,
+      repeat: -1
+    })
+
+    this.mago = this.physics.add.sprite(2375, 432, 'mago')
+    this.mago.anims.play('mago-parado')
+    this.mago.setImmovable(true)
+
     if (globalThis.game.jogadores.primeiro === globalThis.game.socket.id) {
       globalThis.game.remoteConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.remoteConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -548,8 +561,8 @@ export default class mapa extends Phaser.Scene {
       })
 
       // this.blocoquebra = this.physics.add.sprite(590, 1442, 'blocoquebra')
-      this.personagemLocal = this.physics.add.sprite(2317, 432, 'menino')
-      this.personagemRemoto = this.add.sprite(2343, 432, 'menina')
+      this.personagemLocal = this.physics.add.sprite(2317, 490, 'menino')
+      this.personagemRemoto = this.add.sprite(2343, 490, 'menina')
     } else if (globalThis.game.jogadores.segundo === globalThis.game.socket.id) {
       globalThis.game.localConnection = new RTCPeerConnection(globalThis.game.iceServers)
       globalThis.game.dadosJogo = globalThis.game.localConnection.createDataChannel('dadosJogo', { negotiated: true, id: 0 })
@@ -580,9 +593,10 @@ export default class mapa extends Phaser.Scene {
       })
 
       // Cria os sprites dos personagens local e remoto
-      this.personagemLocal = this.physics.add.sprite(2343, 432, 'menina')
-      this.personagemRemoto = this.add.sprite(2317, 432, 'menino')
+      this.personagemLocal = this.physics.add.sprite(2343, 490, 'menina')
+      this.personagemRemoto = this.add.sprite(2317, 490, 'menino')
     }
+    this.physics.add.collider(this.personagemLocal, this.mago)
 
     this.grades.forEach((grade) => {
       this.physics.add.collider(this.personagemLocal, grade.objeto)
@@ -766,7 +780,6 @@ export default class mapa extends Phaser.Scene {
       })
     }, null, this)
 
-    this.portao = this.physics.add.sprite(560, 288, 'portao')
     this.blocovazio = this.physics.add.sprite(2320, 747, 'blocovazio')
     this.physics.add.overlap(this.personagemLocal, this.blocovazio, () => {
       globalThis.game.dadosJogo.send(JSON.stringify({ aranhasAndam: true }))
@@ -797,11 +810,6 @@ export default class mapa extends Phaser.Scene {
       key: 'grade-descendo',
       frames: this.anims.generateFrameNumbers('grade', { start: 0, end: 7 }),
       frameRate: 8
-    })
-    this.anims.create({
-      key: 'portao-abrindo',
-      frames: this.anims.generateFrameNumbers('portao', { start: 0, end: 10 }),
-      frameRate: 10
     })
     this.aranhas.forEach((aranha) => {
       aranha.colisao = this.physics.add.overlap(aranha.sprite, this.personagemLocal, () => {
@@ -985,7 +993,12 @@ export default class mapa extends Phaser.Scene {
       { indice: 32, x: 769, y: 1323 },
       { indice: 33, x: 735, y: 1341 },
       { indice: 34, x: 62, y: 894 },
-      { indice: 35, x: 870, y: 470 }
+      { indice: 35, x: 870, y: 470 },
+      { indice: 36, x: 576, y: 352 },
+      { indice: 37, x: 918, y: 576 },
+      { indice: 38, x: 1158, y: 736 },
+      { indice: 39, x: 1222, y: 896 },
+      { indice: 40, x: 870, y: 822 }
     ]
     this.cristais.forEach((cristal) => {
       cristal.objeto = this.physics.add.sprite(cristal.x, cristal.y, 'cristal')
@@ -1276,7 +1289,7 @@ export default class mapa extends Phaser.Scene {
             }))
           }
         }
-        this.pontos.setText('cristais: ' + this.cristais.filter(cristal => !cristal.objeto.active).length + '/35')
+        this.pontos.setText('cristais: ' + this.cristais.filter(cristal => !cristal.objeto.active).length + '/40')
       }
     } catch (error) {
       console.error('Erro ao enviar os dados do jogo: ', error)
@@ -1499,7 +1512,7 @@ export default class mapa extends Phaser.Scene {
     const cristaisColetados = this.cristais.filter(cristal => !cristal.objeto.active).length
     if (cristaisColetados === this.cristais.length) {
       this.scene.stop('mapa')
-      this.scene.start('finalFeliz')
+      this.scene.start('final')
     }
     this.handleJoystickMove()
     this.checkTeleport()
