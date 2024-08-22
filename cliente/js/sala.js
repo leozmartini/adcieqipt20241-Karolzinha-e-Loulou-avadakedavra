@@ -75,7 +75,7 @@ export default class sala extends Phaser.Scene {
 
         // Para a cena atual e inicia a cena do mapa
         this.scene.stop('sala')
-        this.scene.start('cutscene')
+        this.scene.start('mapa')
       } else if (jogadores.primeiro) {
         // Se o primeiro jogador já estiver conectado, aguarda o segundo
         this.mensagem.setText('Aguardando segundo jogador...')
